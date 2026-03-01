@@ -1,0 +1,30 @@
+{
+    "name": "alcamo/x690",
+    "description": "X690 serialization",
+    "keywords": [ "data-element", "serialization", "X.690" ],
+    "license": "Apache-2.0",
+    "require": {
+        "php": "7.3 - 8.0",
+        "alcamo/data-element": "dev-master"
+    },
+    "autoload": {
+	"psr-4": {
+	    "alcamo\\x690\\": "src/"
+	}
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "squizlabs/php_codesniffer": "3.*"
+    },
+    "scripts": {
+        "test": [
+            "phpunit tests",
+            "phpcs --standard=PSR12 -p -s src",
+            "phpcs --standard=PSR12 -p -s --exclude=PSR1.Classes.ClassDeclaration,PSR1.Files.SideEffects tests"
+        ],
+        "fix": [
+            "phpcbf --standard=PSR12 -p -s src",
+            "phpcbf --standard=PSR12 -p -s --exclude=PSR1.Classes.ClassDeclaration,PSR1.Files.SideEffects tests"
+        ]
+    }
+}
