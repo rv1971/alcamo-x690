@@ -2,12 +2,14 @@
 
 namespace alcamo\x690;
 
+use alcamo\xml\NamespaceConstantsInterface;
+
 /**
  * @brief Dictionary for TLV data elements
  *
  * @date Last reviewed 2026-05-06
  */
-interface TlvDeDictInterface
+interface TlvDeDictInterface extends NamespaceConstantsInterface
 {
     /**
      * @param $tag Tag|string Tag or hexadecimal string representation of a tag.

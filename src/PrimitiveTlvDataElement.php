@@ -52,26 +52,31 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
 
         $this->serializer_ = $serializer;
 
-        switch (true) {
-            case isset($format):
-                $this->format_ = $format;
-                break;
+        if (isset($format)) {
+            $this->format_ = $format;
+        } else {
+            switch ($serializer->getEncoding()) {
+                case 'BCD':
+                    $this->format_ = 'n';
+                    break;
 
-            case $serializer->getEncoding() == 'BCD':
-                $this->format_ = 'n';
-                break;
+                case 'COMPRESSED-BCD':
+                    $this->format_ = 'cn';
+                    break;
 
-            case $serializer->getEncoding() == 'COMPRESSED-BCD':
-                $this->format_ = 'cn';
-                break;
+                case 'ASCII':
+                case 'EBCDIC':
+                    $this->format_ = 'ans';
+                    break;
 
-            case $serializer->getEncoding() != 'EBCDIC':
-            case $serializer->getEncoding() == 'ASCII':
-                $this->format_ = 'ans';
-                break;
+                default:
+                    $this->format_ = 'b';
+            }
 
-            default:
-                $this->format_ = 'b';
+            if ($serializer->getLengthRange()) {
+                $this->format_ .= ' '
+                    . str_replace('-', '..', $serializer->getLengthRange());
+            }
         }
     }
 
