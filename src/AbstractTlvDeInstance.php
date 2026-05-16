@@ -25,6 +25,11 @@ abstract class AbstractTlvDeInstance
         return $this->tlvDataElement_;
     }
 
+    public function getLength(): int
+    {
+        return count($this->rawContent_);
+    }
+
     public function getRawContent(): BinaryString
     {
         return $this->rawContent_;

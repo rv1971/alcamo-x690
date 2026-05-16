@@ -6,14 +6,12 @@ use alcamo\data_element\{DataElementInterface, SerializerInterface};
 use alcamo\exception\DataValidationFailed;
 
 /**
- * @brief TLV data element
+ * @brief Primitive TLV data element
  *
- * @date Last reviewed 2026-05-05
+ * @date Last reviewed 2026-05-14
  */
-class TlvDataElement implements TlvDataElementInterface
+class PrimitiveTlvDataElement extends AbstractTlvDataElement
 {
-    private $tag_;         ///< Tag
-    private $dataElement_; ///< DataElementInterface
     private $serializer_;  ///< SerializerInterface
     private $format_;      ///< string
 
@@ -23,8 +21,18 @@ class TlvDataElement implements TlvDataElementInterface
         SerializerInterface $serializer,
         ?string $format = null
     ) {
+        parent::__construct($tag, $dataElement);
+
+        if ($this->tag_->isConstructed()) {
+            /** @throw alcamo::exception::DataValidationFailed if tag in
+             *  $tlvDataElement is not constructed. */
+            throw (new DataValidationFailed())->setMessageContext(
+                [ 'extraMessage' => "{$this->tag_} is constructed" ]
+            );
+        }
+
         if (
-            !$dataElement->getDatatype()->isEqualToOrDerivedFrom(
+            !$this->dataElement_->getDatatype()->isEqualToOrDerivedFrom(
                 $serializer->getDatatype()->getXName()
             )
         ) {
@@ -34,17 +42,13 @@ class TlvDataElement implements TlvDataElementInterface
             throw (new DataValidationFailed())->setMessageContext(
                 [
                     'extraMessage' => 'the data element datatype '
-                        . $dataElement->getDatatype()->getXName()
+                        . $this->dataElement_->getDatatype()->getXName()
                         . ' is not equal to or derived from '
                         . 'the serializer datatype'
                         . $serializer->getDatatype()->getXName()
                 ]
             );
         }
-
-        $this->tag_ = $tag;
-
-        $this->dataElement_ = $dataElement;
 
         $this->serializer_ = $serializer;
 
@@ -69,16 +73,6 @@ class TlvDataElement implements TlvDataElementInterface
             default:
                 $this->format_ = 'b';
         }
-    }
-
-    public function getTag(): Tag
-    {
-        return $this->tag_;
-    }
-
-    public function getDataElement(): DataElementInterface
-    {
-        return $this->dataElement_;
     }
 
     public function getSerializer(): SerializerInterface

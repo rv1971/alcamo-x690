@@ -2,8 +2,8 @@
 
 namespace alcamo\x690;
 
-use alcamo\exception\DataValidationFailed;
 use alcamo\data_element\DeInstanceInterface;
+use alcamo\rdf_literal\LiteralInterface;
 
 /**
  * @brief Instance of a primitive TLV data element
@@ -14,7 +14,7 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     DeInstanceInterface
 {
     public static function newFromRawContent(
-        TlvDataElement $tlvDataElement,
+        PrimitiveTlvDataElement $tlvDataElement,
         BinaryString $rawContent
     ): self {
         return new static(
@@ -26,7 +26,7 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     }
 
     public static function newFromLiteral(
-        TlvDataElement $tlvDataElement,
+        PrimitiveTlvDataElement $tlvDataElement,
         LiteralInterface $literal
     ): self {
         return new static(
@@ -41,18 +41,10 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     private $literal_; ///< LiteralInterface
 
     protected function __construct(
-        TlvDataElement $tlvDataElement,
+        PrimitiveTlvDataElement $tlvDataElement,
         BinaryString $rawContent,
         LiteralInterface $literal
     ) {
-        if ($tlvDataElement->getTag()->isConstructed()) {
-            /** @throw alcamo::exception::DataValidationFailed if tag in
-             *  $tlvDataElement is not constructed. */
-            throw (new DataValidationFailed())->setMessageContext(
-                [ 'extraMessage' => "$tag is constructed" ]
-            );
-        }
-
         parent::__construct($tlvDataElement, $rawContent);
 
         $this->literal_ = $literal;

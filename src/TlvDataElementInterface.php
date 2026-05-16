@@ -2,20 +2,19 @@
 
 namespace alcamo\x690;
 
-use alcamo\data_element\{DataElementInterface, SerializerInterface};
+use alcamo\data_element\DataElementInterface;
+use alcamo\xml\NamespaceConstantsInterface;
 
 /**
  * @brief TLV data element
  *
- * @date Last reviewed 2026-05-05
+ * @date Last reviewed 2026-05-14
  */
-interface TlvDataElementInterface
+interface TlvDataElementInterface extends
+    DataElementInterface,
+    NamespaceConstantsInterface
 {
     public function getTag(): Tag;
-
-    public function getDataElement(): DataElementInterface;
-
-    public function getSerializer(): SerializerInterface;
 
     public function getFormat(): string;
 }

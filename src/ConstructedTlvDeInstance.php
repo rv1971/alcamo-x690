@@ -2,51 +2,45 @@
 
 namespace alcamo\x690;
 
-use alcamo\exception\{DataValidationFailed, InvalidType};
+use alcamo\exception\InvalidType;
 
 /**
  * @brief Instance of a constructed TLV data element
+ *
+ * @note Since the TLV data element contains raw *content* but not the raw
+ * *length*, serializing a TLV data element always uses the definite form of
+ * length encoding, even if the data element was deserialized from data with
+ * the indefinite form. In this case the result of deserializing and
+ * subsequent serializing does not exactly reproduce the original data.
  *
  * @date Last reviewed 2026-05-06
  */
 class ConstructedTlvDeInstance extends AbstractTlvDeInstance
 {
-    public static function newFromContent(
-        TlvDataElement $tlvDataElement,
-        iterable $content
+    public static function newFromChildren(
+        ConstructedTlvDataElement $tlvDataElement,
+        iterable $children
     ): self {
-        $tlvSerializer = new TlvSerializer();
-
-        $rawContent = '';
-
-        foreach ($content as $deInstance) {
-            $rawContent .= $tlvSerializer->serializeTlvDeInstance($deInstance);
-        }
-
-        return new static($tlvDataElement, $content, $rawContent);
+        return new static(
+            $tlvDataElement,
+            $children,
+            (new TlvSerializer())->serializeTlvDeInstances($children)
+        );
     }
 
-    private $content_; ///< array of AbstractTlvDeInstance
+    private $children_; ///< array of AbstractTlvDeInstance
 
     public function __construct(
-        TlvDataElement $tlvDataElement,
+        ConstructedTlvDataElement $tlvDataElement,
         BinaryString $rawContent,
-        iterable $content
+        iterable $children
     ) {
-        if (!$tlvDataElement->getTag()->isConstructed()) {
-            /** @throw alcamo::exception::DataValidationFailed if tag in
-             *  $tlvDataElement is not constructed. */
-            throw (new DataValidationFailed())->setMessageContext(
-                [ 'extraMessage' => "$tag is primitive" ]
-            );
-        }
+        $this->children_ = [];
 
-        $this->content_ = [];
-
-        foreach ($content as $key => $deInstance) {
+        foreach ($children as $key => $deInstance) {
             if (!($deInstance instanceof AbstractTlvDeInstance)) {
                 /** @throw alcamo::exception::InvalidType if an item in
-                 *  $content is not an AbstractTlvDeInstance object. */
+                 *  $children is not an AbstractTlvDeInstance object. */
                 throw (new InvalidType())->setMessageContext(
                     [
                         'value' => $deInstance,
@@ -56,14 +50,14 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
                 );
             }
 
-            $this->content_[$key] = $deInstance;
+            $this->children_[$key] = $deInstance;
         }
 
         parent::__construct($tlvDataElement, $rawContent);
     }
 
-    public function getContent(): array
+    public function getChildren(): array
     {
-        return $this->content_;
+        return $this->children_;
     }
 }

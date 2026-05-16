@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\exception\OutOfRange;
+use alcamo\exception\{InvalidType, OutOfRange};
 
 /**
  * @brief Serializer for TLV data element instances
@@ -39,5 +39,28 @@ class TlvSerializer
         return $deInstance->getTlvDataElement()->getTag()->getData()
             . $this->serializeLength(count($deInstance->getRawContent()))
             . $deInstance->getRawContent()->getData();
+    }
+
+    public function serializeTlvDeInstances(iterable $deInstances): string
+    {
+        $result = '';
+
+        foreach ($deInstances as $key => $deInstance) {
+            if (!($deInstance instanceof AbstractTlvDeInstance)) {
+                /** @throw alcamo::exception::InvalidType if an item in
+                 *  $children is not an AbstractTlvDeInstance object. */
+                throw (new InvalidType())->setMessageContext(
+                    [
+                        'value' => $deInstance,
+                        'expectedOneOf' => AbstractTlvDeInstance::class,
+                        'forKey' => $key
+                    ]
+                );
+            }
+
+            $result .= $tlvSerializer->serializeTlvDeInstance($deInstance);
+        }
+
+        return $result;
     }
 }

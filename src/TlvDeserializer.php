@@ -3,16 +3,26 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\BinaryString;
-use alcamo\exception\Eof;
+use alcamo\exception\{Eof, OutOfRange};
 use alcamo\input_stream\InputStreamInterface;
 
+/**
+ * @brief Deserializer for TLV data element instances
+ *
+ * @date Last reviewed 2026-05-06
+ */
 class TlvDeserializer
 {
-    private $tlvDataElementDict_; ///< TlvDataElementDictInterface
+    private $tlvDeDict_; ///< TlvDeDictInterface
 
-    public function __construct(TlvDataElementDictInterface $tlvDataElementDict)
+    public function __construct(TlvDeDictInterface $tlvDeDict)
     {
-        $this->tlvDataElementDict_ = $tlvDataElementDict;
+        $this->tlvDeDict_ = $tlvDeDict;
+    }
+
+    public function getTlvDeDict(): TlvDeDictInterface
+    {
+        return $this->tlvDeDict_;
     }
 
     public function deserializeTag(InputStreamInterface $istream): Tag
@@ -112,59 +122,81 @@ class TlvDeserializer
         }
 
         /** Lengths up to 4GiB - 1 are supported. */
-
-        /** @todo simplify using always 'N' and padding data? See BinaryString
-         *  implementation. */
-        switch ($lengthByteCount) {
-            case '1':
-                return ord($lengthData);
-
-            case '2':
-                return unpack('n', $lengthData)[1];
-
-            case '3':
-                return unpack('N', "\x00$lengthData")[1];
-
-            case '4':
-                return unpack('N', $lengthData)[1];
-        }
+        return unpack('N', str_pad($lengthData, 4, "\x00", STR_PAD_LEFT))[1];
     }
 
-    public function deserializeDataValue(
+    public function deserializeTlvDeInstance(
         InputStreamInterface $istream,
         ?string $parent = null
-    ): DataValue {
+    ): AbstractTlvDeInstance {
         $tag = $this->deserializeTag($istream);
-
-        /** @todo handle end-of-content tag */
 
         $length = $this->deserializeLength($istream);
 
-        /** @todo handle length -1 */
+        if ($tag->isEoc()) {
+            return $this->tlvDeDict_->getEocDeInstance();
+        }
 
-        $rawContent = $istream->extract($length);
-
-        $tlvDataElement = $this->tlvDataElementDict_->lookup($tag, $parent);
+        $tlvDataElement = $this->tlvDeDict_->lookup($tag, $parent);
 
         if ($tag->isConstructed()) {
-            $content = [];
+            if ($length >= 0) {
+                $rawContent = $istream->extract($length);
 
-            $istream2 = new InputStream($rawContent);
+                $content = $this->deserializeDeInstances(
+                    new InputStream($rawContent),
+                    $tag
+                );
+            } else {
+                $rawContent = '';
 
-            while ($istream2->isGood()) {
-                $content[] = $this->deserializeDataValue($istream2, $tag);
+                $content = $this
+                    ->deserializeDeInstances($istream, $tag, true, $rawContent);
             }
 
-            return new ConstructedDataValue(
+            return new ConstructedDeInstance(
                 $tlvDataElement,
-                $rawContent,
+                new BinaryString($rawContent),
                 $content
             );
         } else {
-            return PrimitiveDataValue::newFromRawContent(
+            OutOfRange::throwIfNegative($length);
+
+            $rawContent = $istream->extract($length);
+
+            return PrimitiveDeInstance::newFromRawContent(
                 $tlvDataElement,
                 new BinaryString($rawContent)
             );
         }
+    }
+
+    public function deserializeTlvDeInstances(
+        InputStreamInterface $istream,
+        ?string $parent = null,
+        ?bool $stopAtEoc = null,
+        ?string& $rawContent = null
+    ): array {
+        $result = [];
+
+        if ($stopAtEoc) {
+            $eocDeInstance = $this->tlvDeDict_->getEocDeInstance();
+        }
+
+        while ($istream->isGood()) {
+            $deInstance = $this->deserializeDeInstance($istream, $parent);
+
+            if ($stopAtEoc && $deInstance === $eocDeInstance) {
+                break;
+            }
+
+            $result[] = $deInstance;
+
+            if (isset($rawContent)) {
+                $rawContent .= $deInstance->getRawContent();
+            }
+        }
+
+        return $result;
     }
 }
