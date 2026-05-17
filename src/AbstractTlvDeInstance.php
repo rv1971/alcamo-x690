@@ -2,6 +2,9 @@
 
 namespace alcamo\x690;
 
+use alcamo\binary_data\BinaryString;
+use alcamo\data_element\DataElementInterface;
+
 /**
  * @brief Instance of a TLV data element
  *
@@ -17,10 +20,10 @@ abstract class AbstractTlvDeInstance
         BinaryString $rawContent
     ) {
         $this->tlvDataElement_ = $tlvDataElement;
-        $this->rawContent_ = $rawContent;
+        $this->rawContent_ = clone $rawContent;
     }
 
-    public function getTlvDataElement(): TlvDataElementInterface
+    public function getDataElement(): DataElementInterface
     {
         return $this->tlvDataElement_;
     }

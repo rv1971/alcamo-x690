@@ -3,7 +3,7 @@
 namespace alcamo\x690;
 
 use alcamo\data_element\DataElementInterface;
-use alcamo\exception\{DataValidationFailed, InvalidType};
+use alcamo\exception\DataValidationFailed;
 
 /**
  * @brief Constructed TLV data element
@@ -16,11 +16,11 @@ class ConstructedTlvDataElement extends AbstractTlvDataElement
     {
         parent::__construct($tag, $dataElement);
 
-        if (!$this->tag_->getTag()->isConstructed()) {
+        if (!$this->tag_->isConstructed()) {
             /** @throw alcamo::exception::DataValidationFailed if tag in
              *  $tlvDataElement is not constructed. */
             throw (new DataValidationFailed())->setMessageContext(
-                [ 'extraMessage' => "{$this->tag_} is primitive" ]
+                [ 'extraMessage' => "tag '{$this->tag_}' is primitive" ]
             );
         }
 
@@ -28,10 +28,16 @@ class ConstructedTlvDataElement extends AbstractTlvDataElement
             $this->dataElement_->getDatatype()->getPrimitiveType()->getXName()
                 != self::XSD_NS . ' hexBinary'
         ) {
-            /** @throw alcamo::exception::InvalidType if datatype of data
-             *  element is not equal to or derived from `xsd:hexBinary`. */
-            throw (new InvalidType())->setMessageContext(
-                [ 'expectedOneOf' => 'derived from xsd:hexBinary' ]
+            /** @throw alcamo::exception::DataValidationFailed if datatype of
+             *  data element is not equal to or derived from
+             *  `xsd:hexBinary`. */
+            throw (new DataValidationFailed())->setMessageContext(
+                [
+                    'extraMessage' => 'the data element datatype '
+                        . $this->dataElement_->getDatatype()->getXName()
+                        . ' is not equal to or derived from '
+                        . self::XSD_NS . ' hexBinary'
+                ]
             );
         }
     }

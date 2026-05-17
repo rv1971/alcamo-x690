@@ -2,6 +2,7 @@
 
 namespace alcamo\x690;
 
+use alcamo\binary_data\BinaryString;
 use alcamo\data_element\DeInstanceInterface;
 use alcamo\rdf_literal\LiteralInterface;
 
@@ -13,18 +14,6 @@ use alcamo\rdf_literal\LiteralInterface;
 class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     DeInstanceInterface
 {
-    public static function newFromRawContent(
-        PrimitiveTlvDataElement $tlvDataElement,
-        BinaryString $rawContent
-    ): self {
-        return new static(
-            $tlvDataElement,
-            $rawContent,
-            $tlvDataElement->getSerializer()
-                ->deserialize($rawContent->getValue())
-        );
-    }
-
     public static function newFromLiteral(
         PrimitiveTlvDataElement $tlvDataElement,
         LiteralInterface $literal
@@ -34,7 +23,19 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
             new BinaryString(
                 $tlvDataElement->getSerializer()->serialize($literal)
             ),
-            $literal
+            clone $literal
+        );
+    }
+
+    public static function newFromRawContent(
+        PrimitiveTlvDataElement $tlvDataElement,
+        BinaryString $rawContent
+    ): self {
+        return new static(
+            $tlvDataElement,
+            $rawContent,
+            $tlvDataElement->getSerializer()
+                ->deserialize($rawContent->getData())
         );
     }
 
