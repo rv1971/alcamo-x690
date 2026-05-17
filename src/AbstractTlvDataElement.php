@@ -19,8 +19,12 @@ abstract class AbstractTlvDataElement implements TlvDataElementInterface
     public function __construct(Tag $tag, DataElementInterface $dataElement)
     {
         $this->tag_ = $tag;
+        $this->dataElement_ = clone $dataElement;
+    }
 
-        $this->dataElement_ = $dataElement;
+    public function __clone()
+    {
+        $this->dataElement_ = clone $this->dataElement_;
     }
 
     public function getTag(): Tag

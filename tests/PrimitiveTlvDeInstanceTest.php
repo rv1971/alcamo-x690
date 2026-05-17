@@ -3,7 +3,6 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-
 use alcamo\binary_data\BinaryString;
 use alcamo\data_element\{
     AbstractSerializer,

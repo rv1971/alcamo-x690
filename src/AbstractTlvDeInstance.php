@@ -23,6 +23,12 @@ abstract class AbstractTlvDeInstance
         $this->rawContent_ = clone $rawContent;
     }
 
+    public function __clone()
+    {
+        $this->tlvDataElement_ = clone $this->tlvDataElement_;
+        $this->rawContent_ = clone $this->rawContent_;
+    }
+
     public function getDataElement(): DataElementInterface
     {
         return $this->tlvDataElement_;

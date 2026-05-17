@@ -51,6 +51,13 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
         $this->literal_ = $literal;
     }
 
+    public function __clone()
+    {
+        parent::__clone();
+
+        $this->literal_ = clone $this->literal_;
+    }
+
     public function getLiteral(): LiteralInterface
     {
         return $this->literal_;

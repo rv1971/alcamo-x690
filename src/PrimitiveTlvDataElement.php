@@ -12,8 +12,8 @@ use alcamo\exception\DataValidationFailed;
  */
 class PrimitiveTlvDataElement extends AbstractTlvDataElement
 {
-    private $serializer_;  ///< SerializerInterface
-    private $format_;      ///< string
+    private $serializer_; ///< SerializerInterface
+    private $format_;     ///< string
 
     public function __construct(
         Tag $tag,
