@@ -53,7 +53,8 @@ class TlvDumper
                ->getDataElementLabel($deInstance->getDataElement()));
     }
 
-    public function dumpLength(AbstractTlvDeInstance $deInstance): string {
+    public function dumpLength(AbstractTlvDeInstance $deInstance): string
+    {
         return sprintf('[%X]', $deInstance->getLength());
     }
 

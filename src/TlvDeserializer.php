@@ -175,7 +175,7 @@ class TlvDeserializer
         InputStreamInterface $istream,
         ?string $parent = null,
         ?bool $stopAtEoc = null,
-        ?string& $rawContent = null
+        ?string &$rawContent = null
     ): array {
         $result = [];
 

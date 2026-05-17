@@ -19,7 +19,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
         Tag $tag,
         DataElementInterface $dataElement,
         SerializerInterface $serializer,
-        ?string $format = null
+        ?string $formatWithoutLength = null
     ) {
         parent::__construct($tag, $dataElement);
 
@@ -27,7 +27,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
             /** @throw alcamo::exception::DataValidationFailed if tag in
              *  $tlvDataElement is not constructed. */
             throw (new DataValidationFailed())->setMessageContext(
-                [ 'extraMessage' => "{$this->tag_} is constructed" ]
+                [ 'extraMessage' => "tag '{$this->tag_}' is constructed" ]
             );
         }
 
@@ -36,7 +36,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
                 $serializer->getDatatype()->getXName()
             )
         ) {
-            /** @todo throw alcamo::exception::DataValidationFailed if the
+            /** @throw alcamo::exception::DataValidationFailed if the
              *  data element datatype it not equal to or derived from the
              *  serializer datatype. */
             throw (new DataValidationFailed())->setMessageContext(
@@ -44,7 +44,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
                     'extraMessage' => 'the data element datatype '
                         . $this->dataElement_->getDatatype()->getXName()
                         . ' is not equal to or derived from '
-                        . 'the serializer datatype'
+                        . 'the serializer datatype '
                         . $serializer->getDatatype()->getXName()
                 ]
             );
@@ -52,8 +52,8 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
 
         $this->serializer_ = $serializer;
 
-        if (isset($format)) {
-            $this->format_ = $format;
+        if (isset($formatWithoutLength)) {
+            $this->format_ = $formatWithoutLength;
         } else {
             switch ($serializer->getEncoding()) {
                 case 'BCD':
@@ -72,11 +72,10 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
                 default:
                     $this->format_ = 'b';
             }
+        }
 
-            if ($serializer->getLengthRange()) {
-                $this->format_ .= ' '
-                    . str_replace('-', '..', $serializer->getLengthRange());
-            }
+        if ($serializer->getLengthRange()) {
+            $this->format_ .= ' ' . $serializer->getLengthRange();
         }
     }
 

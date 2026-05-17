@@ -3,10 +3,15 @@
 namespace alcamo\x690;
 
 use alcamo\data_element\{
+    AbstractSerializer,
+    BinarySerializer,
     BitStringSerializer,
     DataElement,
+    DateTimeSerializer,
+    IntegerSerializer,
     LiteralWorkbench,
-    NonNegativeIntegerSerializer
+    NonNegativeIntegerSerializer,
+    StringSerializer
 };
 use alcamo\rdf_literal\BitStringLiteral;
 
@@ -15,155 +20,203 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
     public const DICT = [
         '00' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
-            'serializerClass' => BinarySerializer::class,
-            'lengthRange' => [ 0, 0 ],
+            'serializer' => [
+                'class' => BinarySerializer::class,
+                'lengthRange' => [ 0, 0 ]
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'End-of-Content' ] ]
         ],
         '01' => [
             'datatypeXName' => self::XSD_NS . ' boolean',
-            'serializerClass' => NonNegativeIntegerSerializer::class,
-            'encoding' => 'BIG-ENDIAN',
+            'serializer' => [
+                'class' => NonNegativeIntegerSerializer::class,
+                'encoding' => 'BIG-ENDIAN'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Boolean' ] ]
         ],
         '02' => [
             'datatypeXName' => self::XSD_NS . ' integer',
-            'serializerClass' => IntegerSerializer::class,
-            'encoding' => 'BIG-ENDIAN',
+            'serializer' => [
+                'class' => IntegerSerializer::class,
+                'encoding' => 'BIG-ENDIAN'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Integer' ] ]
         ],
         '03' => [
             'datatypeXName' => BitStringLiteral::DEFAULT_DATATYPE_XNAME,
-            'serializerClass' => BitStringSerializer::class,
-            'encoding' => 'X.690',
+            'serializer' => [
+                'class' => BitStringSerializer::class,
+                'encoding' => 'X.690'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Bitstring' ] ]
         ],
         '04' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
-            'serializerClass' => BinarySerializer::class,
+            'serializer' => [ 'class' => BinarySerializer::class ],
             'rdfaData' => [ [ 'rdfs:label', 'Octet string' ] ]
         ],
         '05' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
-            'serializerClass' => BinarySerializer::class,
-            'lengthRange' => [ 0, 0 ],
+            'serializer' => [
+                'class' => BinarySerializer::class,
+                'lengthRange' => [ 0, 0 ]
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Null' ] ]
         ],
         '06' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Object identifier' ] ]
         ],
         '07' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Object descriptor' ] ]
         ],
         '0A' => [
             'datatypeXName' => self::XSD_NS . ' integer',
-            'serializerClass' => IntegerSerializer::class,
-            'encoding' => 'BIG-ENDIAN',
+            'serializer' => [
+                'class' => IntegerSerializer::class,
+                'encoding' => 'BIG-ENDIAN'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'Enumerated' ] ]
         ],
         '0C' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'UTF8String' ] ]
         ],
         '0D' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+                ],
             'rdfaData' => [ [ 'rdfs:label', 'Relative object identifier' ] ]
         ],
         '12' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'NumericString' ] ]
         ],
         '13' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'PrintableString' ] ]
         ],
         '23' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
-            'serializerClass' => DateTimeSerializer::class,
-            'posixFormat' => '%y%m%d%H%M%SZ',
+            'serializer' => [
+                'class' => DateTimeSerializer::class,
+                'posixFormat' => '%y%m%d%H%M%SZ'
+            ],
             'asUtc' => true,
             'rdfaData' => [ [ 'rdfs:label', 'UTCTime' ] ]
         ],
         '24' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
-            'serializerClass' => DateTimeSerializer::class,
-            'posixFormat' => '%Y%m%d%H%M%SZ',
+            'serializer' => [
+                'class' => DateTimeSerializer::class,
+                'posixFormat' => '%Y%m%d%H%M%SZ'
+            ],
             'asUtc' => true,
             'rdfaData' => [ [ 'rdfs:label', 'GeneralizedTime' ] ]
         ],
         '19' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'GraphicString' ] ]
         ],
         '1A' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'VisibleString' ] ]
         ],
         '1B' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'GeneralString' ] ]
         ],
         '1C' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'UniversalString' ] ]
         ],
         '1E' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'UTF-8',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'UTF-8'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'BMPString' ] ]
         ],
         '1F' => [
             'datatypeXName' => self::XSD_NS . ' date',
-            'serializerClass' => DateSerializer::class,
-            'posixFormat' => '%Y%m%d',
+            'serializer' => [
+                'class' => DateSerializer::class,
+                'posixFormat' => '%Y%m%d'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'DATE' ] ]
         ],
         '20' => [
             'datatypeXName' => self::XSD_NS . ' time',
-            'serializerClass' => TimeSerializer::class,
-            'posixFormat' => '%H%M%S',
+            'serializer' => [
+                'class' => TimeSerializer::class,
+                'posixFormat' => '%H%M%S'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'TIME-OF-DAY' ] ]
         ],
         '21' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
-            'serializerClass' => DateTimeSerializer::class,
-            'posixFormat' => '%Y%m%d%H%M%S',
+            'serializer' => [
+                'class' => DateTimeSerializer::class,
+                'posixFormat' => '%Y%m%d%H%M%S'
+            ],
             'rdfaData' => [ [ 'rdfs:label', 'DATE-TIME' ] ]
         ],
         '23' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [
                 [ 'rdfs:label', 'OID internationalized resource identifier' ]
             ]
         ],
         '24' => [
             'datatypeXName' => self::XSD_NS . ' string',
-            'serializerClass' => StringSerializer::class,
-            'encoding' => 'ASCII',
+            'serializer' => [
+                'class' => StringSerializer::class,
+                'encoding' => 'ASCII'
+            ],
             'rdfaData' => [
                 [
                     'rdfs:label',
@@ -189,7 +242,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
         ],
         'UNKNOWN-PRIMITIVE' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
-            'serializerClass' => BinarySerializer::class,
+            'serializer' => [ 'class' => BinarySerializer::class ],
             'rdfaData' => [ [ 'rdfs:label', 'Unknown' ] ]
         ],
         'UNKNOWN-CONSTRUCTED' => [
@@ -239,13 +292,11 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
                 return $this->dictCache_[$tagString] =
                     new ConstructedTlvDataElement($tag, $dataElement);
             } else {
-                $serializerClass = $props->serializerClass;
-
                 return $this->dictCache_[$tagString] =
                     new PrimitiveTlvDataElement(
                         $tag,
                         $dataElement,
-                        $serializerClass::newFromProps($props),
+                        AbstractSerializer::createFromProps($props->serializer),
                         $props->format ?? null
                     );
             }
