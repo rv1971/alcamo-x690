@@ -37,9 +37,18 @@ class ConstructedTlvDataElementTest extends TestCase
         $tlvDe = new ConstructedTlvDataElement($tag, $dataElement);
 
         $this->assertSame($tag, $tlvDe->getTag());
-        $this->assertSame($dataElement, $tlvDe->getDataElement());
+
+        $this->assertNotSame($dataElement, $tlvDe->getDataElement());
+        $this->assertEquals($dataElement, $tlvDe->getDataElement());
+
         $this->assertSame($dataElement->getDatatype(), $tlvDe->getDatatype());
-        $this->assertSame($dataElement->getRdfaData(), $tlvDe->getRdfaData());
+
+        $this->assertNotSame(
+            $dataElement->getRdfaData(),
+            $tlvDe->getRdfaData()
+        );
+        $this->assertEquals($dataElement->getRdfaData(), $tlvDe->getRdfaData());
+
         $this->assertSame($expectedLabel, $tlvDe->getLabel());
     }
 

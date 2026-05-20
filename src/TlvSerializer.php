@@ -2,8 +2,6 @@
 
 namespace alcamo\x690;
 
-use alcamo\exception\{InvalidType, OutOfRange};
-
 /**
  * @brief Serializer for TLV data element instances
  *
@@ -13,8 +11,6 @@ class TlvSerializer
 {
     public function serializeLength(int $length): string
     {
-        OutOfRange::throwIfNegative($length);
-
         switch (true) {
             /** Serialize -1 (indefinite length) as 0x80. */
             case $length == -1:
@@ -36,8 +32,8 @@ class TlvSerializer
     public function serializeTlvDeInstance(
         AbstractTlvDeInstance $deInstance
     ): string {
-        return $deInstance->getTlvDataElement()->getTag()->getData()
-            . $this->serializeLength(count($deInstance->getRawContent()))
+        return $deInstance->getDataElement()->getTag()->getData()
+            . $this->serializeLength($deInstance->getLength())
             . $deInstance->getRawContent()->getData();
     }
 
@@ -46,19 +42,7 @@ class TlvSerializer
         $result = '';
 
         foreach ($deInstances as $key => $deInstance) {
-            if (!($deInstance instanceof AbstractTlvDeInstance)) {
-                /** @throw alcamo::exception::InvalidType if an item in
-                 *  $children is not an AbstractTlvDeInstance object. */
-                throw (new InvalidType())->setMessageContext(
-                    [
-                        'value' => $deInstance,
-                        'expectedOneOf' => AbstractTlvDeInstance::class,
-                        'forKey' => $key
-                    ]
-                );
-            }
-
-            $result .= $tlvSerializer->serializeTlvDeInstance($deInstance);
+            $result .= $this->serializeTlvDeInstance($deInstance);
         }
 
         return $result;

@@ -2,6 +2,7 @@
 
 namespace alcamo\x690;
 
+use alcamo\binary_data\BinaryString;
 use alcamo\exception\InvalidType;
 
 /**
@@ -23,8 +24,10 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
     ): self {
         return new static(
             $tlvDataElement,
-            $children,
-            (new TlvSerializer())->serializeTlvDeInstances($children)
+            new BinaryString(
+                (new TlvSerializer())->serializeTlvDeInstances($children)
+            ),
+            $children
         );
     }
 
@@ -50,10 +53,23 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
                 );
             }
 
-            $this->children_[$key] = $deInstance;
+            $this->children_[$key] = clone $deInstance;
         }
 
         parent::__construct($tlvDataElement, $rawContent);
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+
+        $children = [];
+
+        foreach ($this->children_ as $key => $child) {
+            $children[$key] = clone $child;
+        }
+
+        $this->children_ = $children;
     }
 
     public function getChildren(): array

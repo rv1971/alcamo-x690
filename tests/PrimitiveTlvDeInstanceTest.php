@@ -40,7 +40,7 @@ class PrimitiveTlvDeInstanceTest extends TestCase
         $expectedRawContent
     ) {
         $tlvDe = new PrimitiveTlvDataElement(
-            new Tag(hex2bin($tagString)),
+            Tag::newFromHex($tagString),
             new DataElement(self::$schema_->getGlobalType($typeXName)),
             AbstractSerializer::createFromProps($serializerProps),
         );
@@ -64,6 +64,38 @@ class PrimitiveTlvDeInstanceTest extends TestCase
         $this->assertSame(
             count($expectedRawContent),
             $tlvDeInstance->getLength()
+        );
+
+        $tlvDeInstance2 = clone $tlvDeInstance;
+
+        $this->assertNotSame(
+            $tlvDeInstance->getDataElement(),
+            $tlvDeInstance2->getDataElement()
+        );
+
+        $this->assertEquals(
+            $tlvDeInstance->getDataElement(),
+            $tlvDeInstance2->getDataElement()
+        );
+
+        $this->assertNotSame(
+            $tlvDeInstance->getRawContent(),
+            $tlvDeInstance2->getRawContent()
+        );
+
+        $this->assertEquals(
+            $tlvDeInstance->getRawContent(),
+            $tlvDeInstance2->getRawContent()
+        );
+
+        $this->assertNotSame(
+            $tlvDeInstance->getLiteral(),
+            $tlvDeInstance2->getLiteral()
+        );
+
+        $this->assertEquals(
+            $tlvDeInstance->getLiteral(),
+            $tlvDeInstance2->getLiteral()
         );
     }
 

@@ -68,7 +68,6 @@ class PrimitiveTlvDataElementTest extends TestCase
 
         $this->assertSame($expectedLabel, $tlvDe->getLabel());
         $this->assertSame($serializer, $tlvDe->getSerializer());
-
     }
 
     public function constructProvider(): array
