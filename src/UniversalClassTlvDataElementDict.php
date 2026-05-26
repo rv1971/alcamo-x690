@@ -126,18 +126,20 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
             'datatypeXName' => self::XSD_NS . ' dateTime',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
-                'posixFormat' => '%y%m%d%H%M%SZ'
+                'posixFormat' => '%y%m%d%H%M%SZ',
+                'asUtc' => true
             ],
-            'asUtc' => true,
+            'format' => 'an',
             'rdfaData' => [ [ 'rdfs:label', 'UTCTime' ] ]
         ],
         '18' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
-                'posixFormat' => '%Y%m%d%H%M%SZ'
+                'posixFormat' => '%Y%m%d%H%M%SZ',
+                'asUtc' => true
             ],
-            'asUtc' => true,
+            'format' => 'an',
             'rdfaData' => [ [ 'rdfs:label', 'GeneralizedTime' ] ]
         ],
         '19' => [
@@ -187,6 +189,7 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                 'datatypeXName' => self::XSD_NS . ' date',
                 'posixFormat' => '%Y%m%d'
             ],
+            'format' => 'an',
             'rdfaData' => [ [ 'rdfs:label', 'DATE' ] ]
         ],
         '1F20' => [
@@ -196,6 +199,7 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                 'datatypeXName' => self::XSD_NS . ' time',
                 'posixFormat' => '%H%M%S'
             ],
+            'format' => 'an',
             'rdfaData' => [ [ 'rdfs:label', 'TIME-OF-DAY' ] ]
         ],
         '1F21' => [
@@ -204,6 +208,7 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                 'class' => DateTimeSerializer::class,
                 'posixFormat' => '%Y%m%d%H%M%S'
             ],
+            'format' => 'an',
             'rdfaData' => [ [ 'rdfs:label', 'DATE-TIME' ] ]
         ],
         '1F23' => [
