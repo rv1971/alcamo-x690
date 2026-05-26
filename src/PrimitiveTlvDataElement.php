@@ -66,6 +66,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
 
                 case 'ASCII':
                 case 'EBCDIC':
+                case 'UTF-8':
                     $this->format_ = 'ans';
                     break;
 

@@ -2,6 +2,7 @@
 
 namespace alcamo\x690;
 
+use alcamo\binary_data\BinaryString;
 use alcamo\data_element\{
     AbstractSerializer,
     BinarySerializer,
@@ -13,9 +14,9 @@ use alcamo\data_element\{
     NonNegativeIntegerSerializer,
     StringSerializer
 };
-use alcamo\rdf_literal\BitStringLiteral;
+use alcamo\rdf_literal\{HexBinaryLiteral, BitStringLiteral};
 
-class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
+class UniversalClassTlvDataElementDict implements TlvDeDictInterface
 {
     public const DICT = [
         '00' => [
@@ -30,7 +31,9 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
             'datatypeXName' => self::XSD_NS . ' boolean',
             'serializer' => [
                 'class' => NonNegativeIntegerSerializer::class,
-                'encoding' => 'BIG-ENDIAN'
+                'datatypeXName' => self::XSD_NS . ' boolean',
+                'encoding' => 'BIG-ENDIAN',
+                'lengthRange' => [ 1, 1 ]
             ],
             'rdfaData' => [ [ 'rdfs:label', 'Boolean' ] ]
         ],
@@ -53,7 +56,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
         '04' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
             'serializer' => [ 'class' => BinarySerializer::class ],
-            'rdfaData' => [ [ 'rdfs:label', 'Octet string' ] ]
+            'rdfaData' => [ [ 'rdfs:label', 'Octetstring' ] ]
         ],
         '05' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
@@ -119,7 +122,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
             ],
             'rdfaData' => [ [ 'rdfs:label', 'PrintableString' ] ]
         ],
-        '23' => [
+        '17' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
@@ -128,7 +131,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
             'asUtc' => true,
             'rdfaData' => [ [ 'rdfs:label', 'UTCTime' ] ]
         ],
-        '24' => [
+        '18' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
@@ -177,23 +180,25 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
             ],
             'rdfaData' => [ [ 'rdfs:label', 'BMPString' ] ]
         ],
-        '1F' => [
+        '1F1F' => [
             'datatypeXName' => self::XSD_NS . ' date',
             'serializer' => [
-                'class' => DateSerializer::class,
+                'class' => DateTimeSerializer::class,
+                'datatypeXName' => self::XSD_NS . ' date',
                 'posixFormat' => '%Y%m%d'
             ],
             'rdfaData' => [ [ 'rdfs:label', 'DATE' ] ]
         ],
-        '20' => [
+        '1F20' => [
             'datatypeXName' => self::XSD_NS . ' time',
             'serializer' => [
-                'class' => TimeSerializer::class,
+                'class' => DateTimeSerializer::class,
+                'datatypeXName' => self::XSD_NS . ' time',
                 'posixFormat' => '%H%M%S'
             ],
             'rdfaData' => [ [ 'rdfs:label', 'TIME-OF-DAY' ] ]
         ],
-        '21' => [
+        '1F21' => [
             'datatypeXName' => self::XSD_NS . ' dateTime',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
@@ -201,7 +206,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
             ],
             'rdfaData' => [ [ 'rdfs:label', 'DATE-TIME' ] ]
         ],
-        '23' => [
+        '1F23' => [
             'datatypeXName' => self::XSD_NS . ' string',
             'serializer' => [
                 'class' => StringSerializer::class,
@@ -211,7 +216,7 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
                 [ 'rdfs:label', 'OID internationalized resource identifier' ]
             ]
         ],
-        '24' => [
+        '1F24' => [
             'datatypeXName' => self::XSD_NS . ' string',
             'serializer' => [
                 'class' => StringSerializer::class,
@@ -224,19 +229,19 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
                 ]
             ]
         ],
-        '28' => [
+        '3F28' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
             'rdfaData' => [ [ 'rdfs:label', 'External' ] ]
         ],
-        '2B' => [
+        '3F2B' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
             'rdfaData' => [ [ 'rdfs:label', 'Embedded-pdv' ] ]
         ],
-        '30' => [
+        '3F30' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
             'rdfaData' => [ [ 'rdfs:label', 'Sequence' ] ]
         ],
-        '31' => [
+        '3F31' => [
             'datatypeXName' => self::XSD_NS . ' hexBinary',
             'rdfaData' => [ [ 'rdfs:label', 'Set' ] ]
         ],
@@ -255,30 +260,31 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
 
     private $dictCache_ = [];
 
+    private $eocDeInstance_; ///< PrimitiveDeInstance
+
     public function __construct(?LiteralWorkbench $literalWorkbench = null)
     {
         $this->literalWorkbench_ =
             $literalWorkbench ?? LiteralWorkbench::getMainInstance();
     }
 
-    public function lookup(
-        Tag $tag,
-        ?string $parent = null
-    ): TlvDataElementInterface {
+    public function lookup($tag, $parent = null): TlvDataElementInterface
+    {
         $tagString = (string)$tag;
 
-        if (!isset($this->dictCache_[$tagString])) {
-            $props = (object)self::DICT[$tagString] ?? null;
+        if (!($tag instanceof Tag)) {
+            $tag = Tag::newFromHex($tag);
+        }
 
-            if (!isset($props)) {
-                $props = (object)(
-                    self::DICT[
+        if (!isset($this->dictCache_[$tagString])) {
+            $props = (object)(
+                self::DICT[$tagString]
+                    ?? self::DICT[
                         $tag->isConstructed()
                             ? 'UNKNOWN-CONSTRUCTED'
                             : 'UNKNOWN-PRIMITIVE'
                     ]
-                );
-            }
+            );
 
             $props->literalWorkbench = $this->literalWorkbench_;
 
@@ -303,5 +309,17 @@ class UniversalClassTlvDataElementDict implements TlvDataElementDictInterface
         }
 
         return $this->dictCache_[$tagString];
+    }
+
+    public function getEocDeInstance(): PrimitiveTlvDeInstance
+    {
+        if (!isset($this->eocDeInstance_)) {
+            $this->eocDeInstance_ = PrimitiveTlvDeInstance::newFromRawContent(
+                $this->lookup('00'),
+                new BinaryString()
+            );
+        }
+
+        return $this->eocDeInstance_;
     }
 }

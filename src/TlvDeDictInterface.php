@@ -22,8 +22,8 @@ interface TlvDeDictInterface extends NamespaceConstantsInterface
      * given parent, in which case the data element may contain little
      * information but can still be handled.
      */
-    public function lookup($tag, $parent = null): AbstractTlvDataElement;
+    public function lookup($tag, $parent = null): TlvDataElementInterface;
 
     /// Get the End-of-content data element instance
-    public function getEocDeInstance(): PrimitiveDeInstance;
+    public function getEocDeInstance(): PrimitiveTlvDeInstance;
 }

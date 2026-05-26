@@ -19,7 +19,7 @@ use alcamo\rdf_literal\{
 
 class ConstructedTlvDeInstanceTest extends TestCase
 {
-    public const XSD_NS = PrimitiveTlvDataElement::XSD_NS;
+    public const XSD_NS = AbstractTlvDataElement::XSD_NS;
 
     private static $schema_;
 
