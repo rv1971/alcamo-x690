@@ -4,7 +4,7 @@ namespace alcamo\x690;
 
 use alcamo\binary_data\BinaryString;
 use alcamo\exception\{Eof, OutOfRange};
-use alcamo\input_stream\InputStreamInterface;
+use alcamo\input_stream\{InputStreamInterface, StringInputStream};
 
 /**
  * @brief Deserializer for TLV data element instances
@@ -15,9 +15,10 @@ class TlvDeserializer
 {
     private $tlvDeDict_; ///< TlvDeDictInterface
 
-    public function __construct(TlvDeDictInterface $tlvDeDict)
+    public function __construct(?TlvDeDictInterface $tlvDeDict = null)
     {
-        $this->tlvDeDict_ = $tlvDeDict;
+        $this->tlvDeDict_ =
+            $tlvDeDict ?? new UniversalClassTlvDataElementDict();
     }
 
     public function getTlvDeDict(): TlvDeDictInterface
@@ -143,8 +144,8 @@ class TlvDeserializer
             if ($length >= 0) {
                 $rawContent = $istream->extract($length);
 
-                $content = $this->deserializeDeInstances(
-                    new InputStream($rawContent),
+                $content = $this->deserializeTlvDeInstances(
+                    new StringInputStream($rawContent),
                     $tag
                 );
             } else {
@@ -154,7 +155,7 @@ class TlvDeserializer
                     ->deserializeDeInstances($istream, $tag, true, $rawContent);
             }
 
-            return new ConstructedDeInstance(
+            return new ConstructedTlvDeInstance(
                 $tlvDataElement,
                 new BinaryString($rawContent),
                 $content
@@ -164,7 +165,7 @@ class TlvDeserializer
 
             $rawContent = $istream->extract($length);
 
-            return PrimitiveDeInstance::newFromRawContent(
+            return PrimitiveTlvDeInstance::newFromRawContent(
                 $tlvDataElement,
                 new BinaryString($rawContent)
             );
@@ -184,7 +185,7 @@ class TlvDeserializer
         }
 
         while ($istream->isGood()) {
-            $deInstance = $this->deserializeDeInstance($istream, $parent);
+            $deInstance = $this->deserializeTlvDeInstance($istream, $parent);
 
             if ($stopAtEoc && $deInstance === $eocDeInstance) {
                 break;

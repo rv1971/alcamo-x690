@@ -258,7 +258,7 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
         ]
     ];
 
-    private $literalWorkbench_; ///< LiteralWorkbench
+    protected $literalWorkbench_; ///< LiteralWorkbench
 
     private $dictCache_ = [];
 
