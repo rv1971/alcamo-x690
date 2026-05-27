@@ -24,10 +24,8 @@ class MyTlvDataElementDict extends UniversalClassTlvDataElementDict
         if ($tag == '9F00' && $parent == '3F30') {
             return new PrimitiveTlvDataElement(
                 Tag::newFromHex($tag),
-                new DataElement(
-                    $this->literalWorkbench_->getSchema()
-                        ->getGlobalType(self::XSD_NS . ' short')
-                ),
+                $this->literalWorkbench_
+                    ->createDataElementFromXName(self::XSD_NS . ' short'),
                 IntegerSerializer::newFromProps(
                     [
                         'datatypeXName' => self::XSD_NS . ' short',
@@ -41,34 +39,34 @@ class MyTlvDataElementDict extends UniversalClassTlvDataElementDict
     }
 }
 
-class TlvDeSerializerTest extends TestCase
+class TlvDeserializerTest extends TestCase
 {
     public const XSD_NS = AbstractTlvDataElement::XSD_NS;
 
     public function testDeserializeTag(): void
     {
-        $tlvDeSerializer = new TlvDeserializer();
+        $tlvDeserializer = new TlvDeserializer();
 
         $istream = new StringInputStream(hex2bin('00011f1fdf8522'));
 
         $this->assertEquals(
             Tag::newFromHex('00'),
-            $tlvDeSerializer->deserializeTag($istream)
+            $tlvDeserializer->deserializeTag($istream)
         );
 
         $this->assertEquals(
             Tag::newFromHex('01'),
-            $tlvDeSerializer->deserializeTag($istream)
+            $tlvDeserializer->deserializeTag($istream)
         );
 
         $this->assertEquals(
             Tag::newFromHex('1f1f'),
-            $tlvDeSerializer->deserializeTag($istream)
+            $tlvDeserializer->deserializeTag($istream)
         );
 
         $this->assertEquals(
             Tag::newFromHex('df8522'),
-            $tlvDeSerializer->deserializeTag($istream)
+            $tlvDeserializer->deserializeTag($istream)
         );
 
         $this->expectException(Eof::class);
@@ -79,12 +77,12 @@ class TlvDeSerializerTest extends TestCase
                 . 'only 0 unit(s) available at offset 7'
         );
 
-        $tlvDeSerializer->deserializeTag($istream);
+        $tlvDeserializer->deserializeTag($istream);
     }
 
     public function testDeserializeTagExcpetion(): void
     {
-        $tlvDeSerializer = new TlvDeserializer();
+        $tlvDeserializer = new TlvDeserializer();
 
         $istream = new StringInputStream(hex2bin('3f'));
 
@@ -96,22 +94,22 @@ class TlvDeSerializerTest extends TestCase
             . 'only 0 unit(s) available at offset 1'
         );
 
-        $tlvDeSerializer->deserializeTag($istream);
+        $tlvDeserializer->deserializeTag($istream);
     }
 
     public function testDeserializeLength(): void
     {
-        $tlvDeSerializer = new TlvDeserializer();
+        $tlvDeserializer = new TlvDeserializer();
 
         $istream = new StringInputStream(hex2bin('00801282010f'));
 
-        $this->assertEquals(0, $tlvDeSerializer->deserializeLength($istream));
+        $this->assertEquals(0, $tlvDeserializer->deserializeLength($istream));
 
-        $this->assertEquals(-1, $tlvDeSerializer->deserializeLength($istream));
+        $this->assertEquals(-1, $tlvDeserializer->deserializeLength($istream));
 
-        $this->assertEquals(18, $tlvDeSerializer->deserializeLength($istream));
+        $this->assertEquals(18, $tlvDeserializer->deserializeLength($istream));
 
-        $this->assertEquals(271, $tlvDeSerializer->deserializeLength($istream));
+        $this->assertEquals(271, $tlvDeserializer->deserializeLength($istream));
 
         $this->expectException(Eof::class);
 
@@ -121,12 +119,12 @@ class TlvDeSerializerTest extends TestCase
             . 'only 0 unit(s) available at offset 6'
         );
 
-        $tlvDeSerializer->deserializeLength($istream);
+        $tlvDeserializer->deserializeLength($istream);
     }
 
     public function testDeserializeLengthExcpetion(): void
     {
-        $tlvDeSerializer = new TlvDeserializer();
+        $tlvDeserializer = new TlvDeserializer();
 
         $istream = new StringInputStream(hex2bin('831234'));
 
@@ -138,7 +136,7 @@ class TlvDeSerializerTest extends TestCase
             . 'only 2 unit(s) available at offset 1'
         );
 
-        $tlvDeSerializer->deserializeLength($istream);
+        $tlvDeserializer->deserializeLength($istream);
     }
 
     /**

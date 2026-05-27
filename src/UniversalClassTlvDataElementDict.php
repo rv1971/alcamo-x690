@@ -290,11 +290,11 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
 
             $props->literalWorkbench = $this->literalWorkbench_;
 
-            $dataElement = new DataElement(
-                $this->literalWorkbench_->getSchema()
-                    ->getGlobalType($props->datatypeXName),
-                $props->rdfaData ?? null
-            );
+            $dataElement =
+                $this->literalWorkbench_->createDataElementFromXName(
+                    $props->datatypeXName,
+                    $props->rdfaData ?? null
+                );
 
             if ($tag->isConstructed()) {
                 return $this->dictCache_[$tagString] =
