@@ -31,7 +31,6 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
             'datatypeXName' => self::XSD_NS . ' boolean',
             'serializer' => [
                 'class' => NonNegativeIntegerSerializer::class,
-                'datatypeXName' => self::XSD_NS . ' boolean',
                 'encoding' => 'BIG-ENDIAN',
                 'lengthRange' => [ 1, 1 ]
             ],
@@ -186,7 +185,6 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
             'datatypeXName' => self::XSD_NS . ' date',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
-                'datatypeXName' => self::XSD_NS . ' date',
                 'posixFormat' => '%Y%m%d'
             ],
             'format' => 'an',
@@ -196,7 +194,6 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
             'datatypeXName' => self::XSD_NS . ' time',
             'serializer' => [
                 'class' => DateTimeSerializer::class,
-                'datatypeXName' => self::XSD_NS . ' time',
                 'posixFormat' => '%H%M%S'
             ],
             'format' => 'an',
@@ -303,6 +300,8 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                 return $this->dictCache_[$tagString] =
                     new ConstructedTlvDataElement($tag, $dataElement);
             } else {
+                $props->serializer['datatypeXName'] = $props->datatypeXName;
+
                 return $this->dictCache_[$tagString] =
                     new PrimitiveTlvDataElement(
                         $tag,
