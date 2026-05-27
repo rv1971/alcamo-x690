@@ -4,12 +4,10 @@ namespace alcamo\x690;
 
 use alcamo\binary_data\BinaryString;
 use alcamo\data_element\{
-    AbstractSerializer,
     BinarySerializer,
     BitStringSerializer,
     DataElement,
     DateTimeSerializer,
-    DeWorkbench,
     IntegerSerializer,
     NonNegativeIntegerSerializer,
     StringSerializer
@@ -258,15 +256,16 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
         ]
     ];
 
-    protected $deWorkbench_; ///< DeWorkbench
+    protected $tlvDeWorkbench_; ///< TlvDeWorkbench
 
     private $dictCache_ = [];
 
     private $eocDeInstance_; ///< PrimitiveDeInstance
 
-    public function __construct(?DeWorkbench $deWorkbench = null)
+    public function __construct(?TlvDeWorkbench $tlvDeWorkbench = null)
     {
-        $this->deWorkbench_ = $deWorkbench ?? DeWorkbench::getMainInstance();
+        $this->tlvDeWorkbench_ =
+            $tlvDeWorkbench ?? TlvDeWorkbench::getMainInstance();
     }
 
     public function lookup($tag, $parent = null): TlvDataElementInterface
@@ -287,27 +286,8 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                     ]
             );
 
-            $props->deWorkbench = $this->deWorkbench_;
-
-            $dataElement = $this->deWorkbench_->createDataElementFromXName(
-                $props->datatypeXName,
-                $props->rdfaData ?? null
-            );
-
-            if ($tag->isConstructed()) {
-                return $this->dictCache_[$tagString] =
-                    new ConstructedTlvDataElement($tag, $dataElement);
-            } else {
-                $props->serializer['datatypeXName'] = $props->datatypeXName;
-
-                return $this->dictCache_[$tagString] =
-                    new PrimitiveTlvDataElement(
-                        $tag,
-                        $dataElement,
-                        AbstractSerializer::createFromProps($props->serializer),
-                        $props->format ?? null
-                    );
-            }
+            return $this->dictCache_[$tagString] = $this->tlvDeWorkbench_
+                ->createTlvDataElementFromTagAndProps($tag, $props);
         }
 
         return $this->dictCache_[$tagString];

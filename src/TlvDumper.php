@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\data_element\{DeInstanceInterface, ExplainerInterface};
+use alcamo\data_element\{DeInstanceInterface, Explainer, ExplainerInterface};
 
 /**
  * @brief Dumper for TLV data element instances
@@ -23,7 +23,7 @@ class TlvDumper
         ?ExplainerInterface $explainer = null,
         ?int $flags = null
     ) {
-        $this->explainer_ = $explainer;
+        $this->explainer_ = $explainer ?? new Explainer();
         $this->flags_ = (int)$flags;
     }
 
@@ -60,8 +60,17 @@ class TlvDumper
 
     public function dumpLiteral(AbstractTlvDeInstance $deInstance): string
     {
-        return $deInstance->getDataElement()->getSerializer()
-            ->dump($deInstance->getLiteral());
+        switch ($deInstance->getDataElement()->getFormat()[0]) {
+            case 'a':
+                return '"' . $deInstance->getRawContent()->getData() . '"';
+
+            case 'c':
+            case 'n':
+                return $deInstance->getLiteral();
+
+            default:
+                return "'" . $deInstance->getRawContent() . "'";
+        }
     }
 
     public function dumpTlvDeInstance(
@@ -74,7 +83,7 @@ class TlvDumper
             $result .= $this->dumpComments($deInstance, $indent) . "\n";
         }
 
-        $result .= $this->dumpTag($deInstance);
+        $result .= $indent . $this->dumpTag($deInstance);
 
         if ($this->flags_ & self::DUMP_LENGTH) {
             $result .= ' ' . $this->dumpLength($deInstance);
@@ -98,11 +107,13 @@ class TlvDumper
                         $deInstance->getChildren(),
                         static::INDENT_STRING . $indent
                     )
-                    . "\n";
+                    . $indent;
             }
         }
 
-        $result .= ">\n";
+        $result .= ">";
+
+        return $result;
     }
 
     public function dumpTlvDeInstances(
@@ -112,7 +123,7 @@ class TlvDumper
         $result = '';
 
         foreach ($deInstances as $deInstance) {
-            $result .= $this->dumpTlvDeInstance($deInstance, $indent);
+            $result .= $this->dumpTlvDeInstance($deInstance, $indent) . "\n";
         }
 
         return $result;

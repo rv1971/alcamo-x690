@@ -22,16 +22,15 @@ class MyTlvDataElementDict extends UniversalClassTlvDataElementDict
     public function lookup($tag, $parent = null): TlvDataElementInterface
     {
         if ($tag == '9F00' && $parent == '3F30') {
-            return new PrimitiveTlvDataElement(
+            return $this->tlvDeWorkbench_->createTlvDataElementFromTagAndProps(
                 Tag::newFromHex($tag),
-                $this->deWorkbench_
-                    ->createDataElementFromXName(self::XSD_NS . ' short'),
-                IntegerSerializer::newFromProps(
-                    [
-                        'datatypeXName' => self::XSD_NS . ' short',
+                [
+                    'datatypeXName' => self::XSD_NS . ' short',
+                    'serializer' => [
+                        'class' => IntegerSerializer::class,
                         'encoding' => 'BIG-ENDIAN'
                     ]
-                )
+                ]
             );
         }
 
