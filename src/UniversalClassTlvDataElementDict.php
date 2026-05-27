@@ -9,8 +9,8 @@ use alcamo\data_element\{
     BitStringSerializer,
     DataElement,
     DateTimeSerializer,
+    DeWorkbench,
     IntegerSerializer,
-    LiteralWorkbench,
     NonNegativeIntegerSerializer,
     StringSerializer
 };
@@ -258,16 +258,15 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
         ]
     ];
 
-    protected $literalWorkbench_; ///< LiteralWorkbench
+    protected $deWorkbench_; ///< DeWorkbench
 
     private $dictCache_ = [];
 
     private $eocDeInstance_; ///< PrimitiveDeInstance
 
-    public function __construct(?LiteralWorkbench $literalWorkbench = null)
+    public function __construct(?DeWorkbench $deWorkbench = null)
     {
-        $this->literalWorkbench_ =
-            $literalWorkbench ?? LiteralWorkbench::getMainInstance();
+        $this->deWorkbench_ = $deWorkbench ?? DeWorkbench::getMainInstance();
     }
 
     public function lookup($tag, $parent = null): TlvDataElementInterface
@@ -288,13 +287,12 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
                     ]
             );
 
-            $props->literalWorkbench = $this->literalWorkbench_;
+            $props->deWorkbench = $this->deWorkbench_;
 
-            $dataElement =
-                $this->literalWorkbench_->createDataElementFromXName(
-                    $props->datatypeXName,
-                    $props->rdfaData ?? null
-                );
+            $dataElement = $this->deWorkbench_->createDataElementFromXName(
+                $props->datatypeXName,
+                $props->rdfaData ?? null
+            );
 
             if ($tag->isConstructed()) {
                 return $this->dictCache_[$tagString] =

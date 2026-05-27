@@ -24,7 +24,7 @@ class MyTlvDataElementDict extends UniversalClassTlvDataElementDict
         if ($tag == '9F00' && $parent == '3F30') {
             return new PrimitiveTlvDataElement(
                 Tag::newFromHex($tag),
-                $this->literalWorkbench_
+                $this->deWorkbench_
                     ->createDataElementFromXName(self::XSD_NS . ' short'),
                 IntegerSerializer::newFromProps(
                     [
