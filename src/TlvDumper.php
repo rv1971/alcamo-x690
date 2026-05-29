@@ -14,7 +14,10 @@ class TlvDumper
     public const DUMP_COMMENTS = 1; ///< Include comments in dump
     public const DUMP_LENGTH   = 2; ///< Include actual length in dump
 
-    public const INDENT_STRING = '  '; /// Indentation for sub-objects
+    public const INDENT_STRING = '  ';           ///< Indentation for sub-objects
+    public const START_COMMENT_STRING = '; ';    ///< Start of a comment
+    public const START_TAG_CONTENT_STRING = '<'; ///< Start of tag content
+    public const END_TAG_CONTENT_STRING = '>';   ///< End of tag content
 
     protected $explainer_; ///< ?ExplainerInterface
     protected $flags_;     ///< int
@@ -48,8 +51,8 @@ class TlvDumper
     ): string {
         return $deInstance instanceof DeInstanceInterface
             ? ($this->explainer_->explainAsMarkdownText($deInstance)
-               ->indent("$indent; "))
-            : ("$indent; " . $this->explainer_
+               ->indent($indent . static::START_COMMENT_STRING))
+            : ($indent . static::START_COMMENT_STRING . $this->explainer_
                ->getDataElementLabel($deInstance->getDataElement()));
     }
 
@@ -89,7 +92,7 @@ class TlvDumper
             $result .= ' ' . $this->dumpLength($deInstance);
         }
 
-        $result .= ' <';
+        $result .= ' ' . static::START_TAG_CONTENT_STRING;
 
         if ($deInstance instanceof PrimitiveTlvDeInstance) {
             $result .= ' ' . $this->dumpLiteral($deInstance) . ' ';
@@ -111,7 +114,7 @@ class TlvDumper
             }
         }
 
-        $result .= ">";
+        $result .= static::END_TAG_CONTENT_STRING;
 
         return $result;
     }

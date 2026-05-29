@@ -3,6 +3,7 @@
 namespace alcamo\x690;
 
 use alcamo\data_element\{DeInstanceInterface, ExplainerInterface};
+use alcamo\html_creation\Element;
 
 /**
  * @brief Dumper for TLV data element instances in HTML format
@@ -11,14 +12,17 @@ use alcamo\data_element\{DeInstanceInterface, ExplainerInterface};
  */
 class HtmlTlvDumper extends TlvDumper
 {
+    public const START_TAG_CONTENT_STRING = '&lt;';
+    public const END_TAG_CONTENT_STRING = '&gt;';
+
     /**
      * @brief Default HTML parameters
      *
      * For each syntactical item, an HTML class and a prefix for the
-     * `href`attribute in an `\<a>` link can be specified.
+     * `href`attribute in an `\<a>` link can be specified here.
      */
     public const DEFAULT_HTML_PARAMS = [
-        'commentsClass' => null,
+        'commentClass'  => null,
         'lengthClass'   => null,
         'literalClass'  => null,
         'tagClass'      => null,
@@ -50,7 +54,8 @@ class HtmlTlvDumper extends TlvDumper
             'tag',
             $this->flags_ & self::DUMP_COMMENTS
                 ? null
-                : parent::dumpComments($deInstance),
+                : $this->explainer_
+                ->getDataElementLabel($deInstance->getDataElement()),
             $deInstance->getDataElement()->getTag()
         );
     }
@@ -61,7 +66,7 @@ class HtmlTlvDumper extends TlvDumper
     ): string {
         return $this->createElement(
             parent::dumpComments($deInstance, $indent),
-            'comments'
+            'comment'
         );
     }
 
@@ -89,7 +94,7 @@ class HtmlTlvDumper extends TlvDumper
         $classParam = "{$paramPrefix}Class";
         $hrefPrefixParam = "{$paramPrefix}HrefPrefix";
 
-        return Element::createHtml(
+        return Element::createAOrSpan(
             $content,
             $this->htmlParams_->$classParam,
             $title,

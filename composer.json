@@ -1,11 +1,12 @@
 {
     "name": "alcamo/x690",
-    "description": "X690 serialization",
-    "keywords": [ "data-element", "serialization", "X.690" ],
+    "description": "X690 serialization and deserialization",
+    "keywords": [ "data-element", "serialization", "deserialization", "X.690" ],
     "license": "Apache-2.0",
     "require": {
         "php": "7.3 - 8.0",
-        "alcamo/data-element": "dev-master"
+        "alcamo/data-element": "dev-master",
+	"alcamo/html-creation": "^0.12"
     },
     "autoload": {
 	"psr-4": {
