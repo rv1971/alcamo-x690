@@ -8,6 +8,8 @@ use alcamo\exception\DataValidationFailed;
 /**
  * @brief Constructed TLV data element
  *
+ * @invariant Immutable class.
+ *
  * @date Last reviewed 2026-05-07
  */
 class ConstructedTlvDataElement extends AbstractTlvDataElement

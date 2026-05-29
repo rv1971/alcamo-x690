@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\exception\SyntaxError;
 
 /**
@@ -16,9 +16,11 @@ use alcamo\exception\SyntaxError;
 /**
  * @brief TLV tag
  *
+ * @invariant Immutable class.
+ *
  * @date Last reviewed 2026-03-01
  */
-class Tag extends BinaryString
+class Tag extends ImmutableBinaryString
 {
     /// Create from binary string
     public function __construct(string $data)

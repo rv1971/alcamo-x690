@@ -3,7 +3,7 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\data_element\{
     AbstractSerializer,
     DataElement,
@@ -67,26 +67,13 @@ class ConstructedTlvDeInstanceTest extends TestCase
         );
 
         foreach ($children as $key => $child) {
-            $this->assertNotSame($child, $tlvDeInstance->getChildren()[$key]);
-            $this->assertEquals($child, $tlvDeInstance->getChildren()[$key]);
+            $this->assertSame($child, $tlvDeInstance->getChildren()[$key]);
         }
 
         $this->assertEquals(
-            BinaryString::newFromHex($expectedRawContent),
+            ImmutableBinaryString::newFromHex($expectedRawContent),
             $tlvDeInstance->getRawContent()
         );
-
-        $tlvDeInstance2 = clone $tlvDeInstance;
-
-        $this->assertSame(
-            count($tlvDeInstance2->getChildren()),
-            count($tlvDeInstance->getChildren())
-        );
-
-        foreach ($tlvDeInstance->getChildren() as $key => $child) {
-            $this->assertNotSame($child, $tlvDeInstance2->getChildren()[$key]);
-            $this->assertEquals($child, $tlvDeInstance2->getChildren()[$key]);
-        }
     }
 
     public function newFromChildrenProvider(): array
@@ -133,14 +120,14 @@ class ConstructedTlvDeInstanceTest extends TestCase
         $this->expectException(InvalidType::class);
 
         $this->expectExceptionMessage(
-            'Invalid type "alcamo\binary_data\BinaryString", expected one of '
-                . '"alcamo\x690\AbstractTlvDeInstance" for key "foo"'
+            'Invalid type "alcamo\binary_data\ImmutableBinaryString", expected '
+                . 'one of "alcamo\x690\AbstractTlvDeInstance" for key "foo"'
         );
 
         new ConstructedTlvDeInstance(
             $tlvDe,
-            new BinaryString(),
-            [ 'foo' => new BinaryString() ]
+            new ImmutableBinaryString(),
+            [ 'foo' => new ImmutableBinaryString() ]
         );
     }
 }

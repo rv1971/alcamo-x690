@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\exception\{Eof, OutOfRange};
 use alcamo\input_stream\{InputStreamInterface, StringInputStream};
 
@@ -34,7 +34,7 @@ class TlvDeserializer
             /** @throw alcamo::exception::Eof if no data left to read. */
             throw (new Eof())->setMessageContext(
                 [
-                    'object' => new BinaryString($istream),
+                    'object' => new ImmutableBinaryString($istream),
                     'atOffset' => $istream->getOffset(),
                     'requestedUnits' => 1,
                     'availableUnits' => 0
@@ -51,7 +51,7 @@ class TlvDeserializer
                      *  completely read. */
                     throw (new Eof())->setMessageContext(
                         [
-                            'object' => new BinaryString($istream),
+                            'object' => new ImmutableBinaryString($istream),
                             'atOffset' => $istream->getOffset(),
                             'requestedUnits' => 1,
                             'availableUnits' => 0
@@ -74,7 +74,7 @@ class TlvDeserializer
             /** @throw alcamo::exception::Eof if no data left to read. */
             throw (new Eof())->setMessageContext(
                 [
-                    'object' => new BinaryString($istream),
+                    'object' => new ImmutableBinaryString($istream),
                     'atOffset' => $istream->getOffset(),
                     'requestedUnits' => 1,
                     'availableUnits' => 0
@@ -103,7 +103,7 @@ class TlvDeserializer
         } catch (Eof $e) {
             throw $e->addMessageContext(
                 [
-                    'object' => new BinaryString($istream),
+                    'object' => new ImmutableBinaryString($istream),
                     'atOffset' => $istream->getOffset()
                 ]
             );
@@ -114,7 +114,7 @@ class TlvDeserializer
              *  read. */
             throw (new Eof())->setMessageContext(
                 [
-                    'object' => new BinaryString($istream),
+                    'object' => new ImmutableBinaryString($istream),
                     'atOffset' => $istream->getOffset(),
                     'requestedUnits' => $lengthByteCount,
                     'availableUnits' => 0
@@ -157,7 +157,7 @@ class TlvDeserializer
 
             return new ConstructedTlvDeInstance(
                 $tlvDataElement,
-                new BinaryString($rawContent),
+                new ImmutableBinaryString($rawContent),
                 $content
             );
         } else {
@@ -167,7 +167,7 @@ class TlvDeserializer
 
             return PrimitiveTlvDeInstance::newFromRawContent(
                 $tlvDataElement,
-                new BinaryString($rawContent)
+                new ImmutableBinaryString($rawContent)
             );
         }
     }

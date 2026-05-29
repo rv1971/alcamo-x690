@@ -3,7 +3,7 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\data_element\{
     AbstractSerializer,
     BinarySerializer,
@@ -50,11 +50,9 @@ class PrimitiveTlvDeInstanceTest extends TestCase
 
         $this->assertSame($tlvDe, $tlvDeInstance->getDataElement());
 
-        $this->assertNotSame($literal, $tlvDeInstance->getLiteral());
+        $this->assertSame($literal, $tlvDeInstance->getLiteral());
 
-        $this->assertEquals($literal, $tlvDeInstance->getLiteral());
-
-        $expectedRawContent = new BinaryString($expectedRawContent);
+        $expectedRawContent = new ImmutableBinaryString($expectedRawContent);
 
         $this->assertEquals(
             $expectedRawContent,
@@ -64,38 +62,6 @@ class PrimitiveTlvDeInstanceTest extends TestCase
         $this->assertSame(
             count($expectedRawContent),
             $tlvDeInstance->getLength()
-        );
-
-        $tlvDeInstance2 = clone $tlvDeInstance;
-
-        $this->assertNotSame(
-            $tlvDeInstance->getDataElement(),
-            $tlvDeInstance2->getDataElement()
-        );
-
-        $this->assertEquals(
-            $tlvDeInstance->getDataElement(),
-            $tlvDeInstance2->getDataElement()
-        );
-
-        $this->assertNotSame(
-            $tlvDeInstance->getRawContent(),
-            $tlvDeInstance2->getRawContent()
-        );
-
-        $this->assertEquals(
-            $tlvDeInstance->getRawContent(),
-            $tlvDeInstance2->getRawContent()
-        );
-
-        $this->assertNotSame(
-            $tlvDeInstance->getLiteral(),
-            $tlvDeInstance2->getLiteral()
-        );
-
-        $this->assertEquals(
-            $tlvDeInstance->getLiteral(),
-            $tlvDeInstance2->getLiteral()
         );
     }
 
@@ -141,7 +107,7 @@ class PrimitiveTlvDeInstanceTest extends TestCase
             AbstractSerializer::createFromProps($serializerProps),
         );
 
-        $rawContent = new BinaryString($rawContent);
+        $rawContent = new ImmutableBinaryString($rawContent);
 
         $tlvDeInstance = PrimitiveTlvDeInstance::newFromRawContent(
             $tlvDe,
@@ -150,9 +116,7 @@ class PrimitiveTlvDeInstanceTest extends TestCase
 
         $this->assertSame($tlvDe, $tlvDeInstance->getDataElement());
 
-        $this->assertNotSame($rawContent, $tlvDeInstance->getRawContent());
-
-        $this->assertEquals($rawContent, $tlvDeInstance->getRawContent());
+        $this->assertSame($rawContent, $tlvDeInstance->getRawContent());
 
         $this->assertTrue(
             $expectedLiteral->equals($tlvDeInstance->getLiteral())

@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\data_element\{
     BinarySerializer,
     BitStringSerializer,
@@ -298,7 +298,7 @@ class UniversalClassTlvDataElementDict implements TlvDeDictInterface
         if (!isset($this->eocDeInstance_)) {
             $this->eocDeInstance_ = PrimitiveTlvDeInstance::newFromRawContent(
                 $this->lookup('00'),
-                new BinaryString()
+                new ImmutableBinaryString()
             );
         }
 

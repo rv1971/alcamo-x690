@@ -4,7 +4,7 @@ namespace alcamo\x690;
 
 use alcamo\data_element\DataElementInterface;
 use alcamo\dom\schema\component\SimpleTypeInterface;
-use alcamo\rdfa\RdfaData;
+use alcamo\rdfa\ImmutableRdfaData;
 
 /**
  * @brief TLV data element
@@ -19,12 +19,7 @@ abstract class AbstractTlvDataElement implements TlvDataElementInterface
     public function __construct(Tag $tag, DataElementInterface $dataElement)
     {
         $this->tag_ = $tag;
-        $this->dataElement_ = clone $dataElement;
-    }
-
-    public function __clone()
-    {
-        $this->dataElement_ = clone $this->dataElement_;
+        $this->dataElement_ = $dataElement;
     }
 
     public function getTag(): Tag
@@ -42,7 +37,7 @@ abstract class AbstractTlvDataElement implements TlvDataElementInterface
         return $this->dataElement_->getDatatype();
     }
 
-    public function getRdfaData(): ?RdfaData
+    public function getRdfaData(): ImmutableRdfaData
     {
         return $this->dataElement_->getRdfaData();
     }

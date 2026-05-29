@@ -2,7 +2,7 @@
 
 namespace alcamo\x690;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\exception\InvalidType;
 
 /**
@@ -14,6 +14,8 @@ use alcamo\exception\InvalidType;
  * the indefinite form. In this case the result of deserializing and
  * subsequent serializing does not exactly reproduce the original data.
  *
+ * @invariant Immutable class.
+ *
  * @date Last reviewed 2026-05-06
  */
 class ConstructedTlvDeInstance extends AbstractTlvDeInstance
@@ -24,7 +26,7 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
     ): self {
         return new static(
             $tlvDataElement,
-            new BinaryString(
+            new ImmutableBinaryString(
                 (new TlvSerializer())->serializeTlvDeInstances($children)
             ),
             $children
@@ -35,7 +37,7 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
 
     public function __construct(
         ConstructedTlvDataElement $tlvDataElement,
-        BinaryString $rawContent,
+        ImmutableBinaryString $rawContent,
         iterable $children
     ) {
         $this->children_ = [];
@@ -53,23 +55,10 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
                 );
             }
 
-            $this->children_[$key] = clone $deInstance;
+            $this->children_[$key] = $deInstance;
         }
 
         parent::__construct($tlvDataElement, $rawContent);
-    }
-
-    public function __clone()
-    {
-        parent::__clone();
-
-        $children = [];
-
-        foreach ($this->children_ as $key => $child) {
-            $children[$key] = clone $child;
-        }
-
-        $this->children_ = $children;
     }
 
     public function getChildren(): array

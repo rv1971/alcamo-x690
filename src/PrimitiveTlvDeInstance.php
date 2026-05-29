@@ -2,12 +2,14 @@
 
 namespace alcamo\x690;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\data_element\DeInstanceInterface;
 use alcamo\rdf_literal\LiteralInterface;
 
 /**
  * @brief Instance of a primitive TLV data element
+ *
+ * @invariant Immutable class.
  *
  * @date Last reviewed 2026-05-05
  */
@@ -20,16 +22,16 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     ): self {
         return new static(
             $tlvDataElement,
-            new BinaryString(
+            new ImmutableBinaryString(
                 $tlvDataElement->getSerializer()->serialize($literal)
             ),
-            clone $literal
+            $literal
         );
     }
 
     public static function newFromRawContent(
         PrimitiveTlvDataElement $tlvDataElement,
-        BinaryString $rawContent
+        ImmutableBinaryString $rawContent
     ): self {
         return new static(
             $tlvDataElement,
@@ -43,19 +45,12 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
 
     protected function __construct(
         PrimitiveTlvDataElement $tlvDataElement,
-        BinaryString $rawContent,
+        ImmutableBinaryString $rawContent,
         LiteralInterface $literal
     ) {
         parent::__construct($tlvDataElement, $rawContent);
 
         $this->literal_ = $literal;
-    }
-
-    public function __clone()
-    {
-        parent::__clone();
-
-        $this->literal_ = clone $this->literal_;
     }
 
     public function getLiteral(): LiteralInterface

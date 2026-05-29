@@ -72,7 +72,7 @@ class TlvDeserializerTest extends TestCase
 
         $this->expectExceptionMessage(
             'Failed to read 1 unit(s) from object '
-                . '<alcamo\binary_data\BinaryString>"00011F1FDF8522", '
+                . '<alcamo\binary_data\ImmutableBinaryString>"00011F1FDF8522", '
                 . 'only 0 unit(s) available at offset 7'
         );
 
@@ -89,7 +89,7 @@ class TlvDeserializerTest extends TestCase
 
         $this->expectExceptionMessage(
             'Failed to read 1 unit(s) from object '
-            . '<alcamo\binary_data\BinaryString>"3F", '
+            . '<alcamo\binary_data\ImmutableBinaryString>"3F", '
             . 'only 0 unit(s) available at offset 1'
         );
 
@@ -114,7 +114,7 @@ class TlvDeserializerTest extends TestCase
 
         $this->expectExceptionMessage(
             'Failed to read 1 unit(s) from object '
-            . '<alcamo\binary_data\BinaryString>"00801282010F", '
+            . '<alcamo\binary_data\ImmutableBinaryString>"00801282010F", '
             . 'only 0 unit(s) available at offset 6'
         );
 
@@ -131,7 +131,7 @@ class TlvDeserializerTest extends TestCase
 
         $this->expectExceptionMessage(
             'Failed to read 3 unit(s) from stream '
-            . '<alcamo\binary_data\BinaryString>"831234", '
+            . '<alcamo\binary_data\ImmutableBinaryString>"831234", '
             . 'only 2 unit(s) available at offset 1'
         );
 
@@ -185,7 +185,6 @@ class TlvDeserializerTest extends TestCase
 
                 next($expectedChildren);
             }
-
         } else {
             $this->assertEquals(
                 $expectedDeInstance->getDataElement(),

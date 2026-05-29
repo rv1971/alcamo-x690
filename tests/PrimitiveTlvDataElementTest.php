@@ -55,16 +55,11 @@ class PrimitiveTlvDataElementTest extends TestCase
 
         $this->assertSame($tag, $tlvDe->getTag());
 
-        $this->assertNotSame($dataElement, $tlvDe->getDataElement());
-        $this->assertEquals($dataElement, $tlvDe->getDataElement());
+        $this->assertSame($dataElement, $tlvDe->getDataElement());
 
         $this->assertSame($dataElement->getDatatype(), $tlvDe->getDatatype());
 
-        $this->assertNotSame(
-            $dataElement->getRdfaData(),
-            $tlvDe->getRdfaData()
-        );
-        $this->assertEquals($dataElement->getRdfaData(), $tlvDe->getRdfaData());
+        $this->assertSame($dataElement->getRdfaData(), $tlvDe->getRdfaData());
 
         $this->assertSame($expectedLabel, $tlvDe->getLabel());
         $this->assertSame($serializer, $tlvDe->getSerializer());
