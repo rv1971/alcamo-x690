@@ -35,7 +35,7 @@ class TlvDumperTest extends TestCase
             [
                 TlvDumper::DUMP_LENGTH,
                 '021000000000000000000000000000000102',
-                "02 [10] < '00000000000000000000000000000102' >"
+                "02 [10] < '0102' >"
             ],
             [
                 TlvDumper::DUMP_COMMENTS,
@@ -45,7 +45,7 @@ class TlvDumperTest extends TestCase
             [
                 TlvDumper::DUMP_LENGTH,
                 '3F3105' . '030306F0F0',
-                "3F31 [5] < 03 [3] < '06F0F0' > >"
+                "3F31 [5] < 03 [3] < \"1111000011\" > >"
             ],
             [
                 TlvDumper::DUMP_LENGTH,

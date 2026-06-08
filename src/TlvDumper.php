@@ -63,17 +63,8 @@ class TlvDumper
 
     public function dumpLiteral(AbstractTlvDeInstance $deInstance): string
     {
-        switch ($deInstance->getDataElement()->getFormat()[0]) {
-            case 'a':
-                return '"' . $deInstance->getRawContent()->getData() . '"';
-
-            case 'c':
-            case 'n':
-                return $deInstance->getLiteral();
-
-            default:
-                return "'" . $deInstance->getRawContent() . "'";
-        }
+        return $deInstance->getDataElement()->getSerializer()
+            ->dump($deInstance->getLiteral());
     }
 
     public function dumpTlvDeInstance(

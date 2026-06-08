@@ -61,7 +61,7 @@ class HtmlTlvDumperTest extends TestCase
                 . "href=\"https://tags.example.com/3F31\">3F31</a> &lt; "
                 . "<a class=\"tag\" title=\"Bitstring (b)\" "
                 . "href=\"https://tags.example.com/03\">03</a> &lt; "
-                . "'06F0F0' &gt; &gt;"
+                . "\"1111000011\" &gt; &gt;"
             ]
         ];
     }

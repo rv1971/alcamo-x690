@@ -57,7 +57,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
         if (isset($formatWithoutLength)) {
             $this->format_ = $formatWithoutLength;
         } else {
-            switch ($serializer->getEncoding()) {
+            switch ($serializer->getEncodingParams()->getEncoding()) {
                 case 'BCD':
                     $this->format_ = 'n';
                     break;
