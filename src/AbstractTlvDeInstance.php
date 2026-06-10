@@ -39,4 +39,12 @@ abstract class AbstractTlvDeInstance
     {
         return $this->rawContent_;
     }
+
+    /**
+     * @brief Whether $this and $tlvDeInstance are considered equal
+     *
+     * This is the case iff both belong to the same TLV data element, the raw
+     * content and the content are considered equal.
+     */
+    abstract public function equals(self $tlvDeInstance): bool;
 }

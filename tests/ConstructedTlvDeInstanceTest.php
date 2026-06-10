@@ -13,6 +13,7 @@ use alcamo\data_element\{
 use alcamo\dom\schema\SchemaFactory;
 use alcamo\exception\InvalidType;
 use alcamo\rdf_literal\{
+    BooleanLiteral,
     DateLiteral,
     IntegerLiteral
 };
@@ -74,6 +75,10 @@ class ConstructedTlvDeInstanceTest extends TestCase
             ImmutableBinaryString::newFromHex($expectedRawContent),
             $tlvDeInstance->getRawContent()
         );
+
+        $this->assertTrue($tlvDeInstance->equals($tlvDeInstance));
+
+        $this->assertTrue($tlvDeInstance->equals(clone $tlvDeInstance));
     }
 
     public function newFromChildrenProvider(): array
@@ -129,5 +134,62 @@ class ConstructedTlvDeInstanceTest extends TestCase
             new ImmutableBinaryString(),
             [ 'foo' => new ImmutableBinaryString() ]
         );
+    }
+
+    public function testEquals(): void
+    {
+        $tlvDe1 = new ConstructedTlvDataElement(
+            Tag::newFromHex('A0'),
+            new DataElement(
+                self::$schema_->getGlobalType(self::XSD_NS . ' hexBinary')
+            ),
+        );
+
+        $tlvDe2 = new PrimitiveTlvDataElement(
+            Tag::newFromHex('C0'),
+            new DataElement(
+                self::$schema_->getGlobalType(self::XSD_NS . ' boolean')
+            ),
+            new IntegerSerializer(self::XSD_NS . ' boolean')
+        );
+
+        $child1 = PrimitiveTlvDeInstance::newFromLiteral(
+            $tlvDe2,
+            new BooleanLiteral(true)
+        );
+
+        $child2 = PrimitiveTlvDeInstance::newFromLiteral(
+            $tlvDe2,
+            new BooleanLiteral(false)
+        );
+
+        $tlvDeInstance1 =
+            ConstructedTlvDeInstance::newFromChildren($tlvDe1, []);
+
+        $tlvDeInstance2 =
+            ConstructedTlvDeInstance::newFromChildren($tlvDe1, [ $child1 ]);
+
+        $tlvDeInstance3 =
+            ConstructedTlvDeInstance::newFromChildren($tlvDe1, [ $child2 ]);
+
+        $tlvDeInstance4 = ConstructedTlvDeInstance::newFromChildren(
+                $tlvDe1,
+                [ $child1, $child2 ]
+        );
+
+        $tlvDeInstance5 = ConstructedTlvDeInstance::newFromChildren(
+            $tlvDe1,
+                [ $child2, $child1 ]
+        );
+
+        $this->assertFalse($tlvDeInstance1->equals($tlvDeInstance2));
+
+        $this->assertFalse($tlvDeInstance2->equals($tlvDeInstance3));
+
+        $this->assertFalse($tlvDeInstance2->equals($tlvDeInstance4));
+
+        $this->assertFalse($tlvDeInstance3->equals($tlvDeInstance4));
+
+        $this->assertFalse($tlvDeInstance4->equals($tlvDeInstance5));
     }
 }

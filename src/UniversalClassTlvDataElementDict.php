@@ -14,6 +14,11 @@ use alcamo\data_element\{
 };
 use alcamo\rdf_literal\{HexBinaryLiteral, BitStringLiteral};
 
+/**
+ * @brief Data element dictionary with universal class data elements
+ *
+ * @date Last reviewed 2026-05-29
+ */
 class UniversalClassTlvDataElementDict implements TlvDeDictInterface
 {
     public const DICT = [

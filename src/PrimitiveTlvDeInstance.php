@@ -18,12 +18,13 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
 {
     public static function newFromLiteral(
         PrimitiveTlvDataElement $tlvDataElement,
-        LiteralInterface $literal
+        LiteralInterface $literal,
+        ?int $length = null
     ): self {
         return new static(
             $tlvDataElement,
             new ImmutableBinaryString(
-                $tlvDataElement->getSerializer()->serialize($literal)
+                $tlvDataElement->getSerializer()->serialize($literal, $length)
             ),
             $literal
         );
@@ -56,5 +57,16 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     public function getLiteral(): LiteralInterface
     {
         return $this->literal_;
+    }
+
+    public function equals(AbstractTlvDeInstance $tlvDeInstance): bool
+    {
+        if (!($tlvDeInstance instanceof self)) {
+            return false;
+        }
+
+        return $this->getDataElement() == $tlvDeInstance->getDataElement()
+            && $this->getRawContent() == $tlvDeInstance->getRawContent()
+            && $this->literal_ = $tlvDeInstance->literal_;
     }
 }

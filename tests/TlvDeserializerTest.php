@@ -79,7 +79,7 @@ class TlvDeserializerTest extends TestCase
         $tlvDeserializer->deserializeTag($istream);
     }
 
-    public function testDeserializeTagExcpetion(): void
+    public function testDeserializeTagException(): void
     {
         $tlvDeserializer = new TlvDeserializer();
 

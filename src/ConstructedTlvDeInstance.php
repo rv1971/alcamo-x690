@@ -65,4 +65,30 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
     {
         return $this->children_;
     }
+
+    public function equals(AbstractTlvDeInstance $tlvDeInstance): bool
+    {
+        if (!($tlvDeInstance instanceof self)) {
+            return false;
+        }
+
+        if (
+            $this->getDataElement() != $tlvDeInstance->getDataElement()
+            || $this->getRawContent() != $tlvDeInstance->getRawContent()
+        ) {
+            return false;
+        }
+
+        reset($tlvDeInstance->children_);
+
+        foreach ($this->children_ as $child) {
+            if (!$child->equals(current($tlvDeInstance->children_))) {
+                return false;
+            }
+
+            next($tlvDeInstance->children_);
+        }
+
+        return true;
+    }
 }
