@@ -173,13 +173,13 @@ class ConstructedTlvDeInstanceTest extends TestCase
             ConstructedTlvDeInstance::newFromChildren($tlvDe1, [ $child2 ]);
 
         $tlvDeInstance4 = ConstructedTlvDeInstance::newFromChildren(
-                $tlvDe1,
-                [ $child1, $child2 ]
+            $tlvDe1,
+            [ $child1, $child2 ]
         );
 
         $tlvDeInstance5 = ConstructedTlvDeInstance::newFromChildren(
             $tlvDe1,
-                [ $child2, $child1 ]
+            [ $child2, $child1 ]
         );
 
         $this->assertFalse($tlvDeInstance1->equals($tlvDeInstance2));

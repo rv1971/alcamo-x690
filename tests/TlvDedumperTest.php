@@ -2,6 +2,7 @@
 
 namespace alcamo\x690;
 
+use alcamo\exception\SyntaxError;
 use alcamo\input_stream\StringInputStream;
 use alcamo\rdf_literal\{
     BooleanLiteral,
@@ -40,7 +41,7 @@ class TlvDedumperTest extends TestCase
 
         return [
             [
-                "; EoC\n00 < '' >",
+                "; EoC\n00 <>",
                 PrimitiveTlvDeInstance::newFromLiteral(
                     $tlvDeDict->lookup('00'),
                     new HexBinaryLiteral('')
@@ -69,7 +70,7 @@ class TlvDedumperTest extends TestCase
                     . "; sed diam voluptua.\n"
                     . "02 [3] <'11'>\n"
                     . "0C<\"foo\" >\n"
-                    . "0C < '626172' > \n"
+                    . "0C < '626172' > 3F31 <>\n"
                     . "\t>",
                 ConstructedTlvDeInstance::newFromChildren(
                     $tlvDeDict->lookup('3F30'),
@@ -90,11 +91,31 @@ class TlvDedumperTest extends TestCase
                         PrimitiveTlvDeInstance::newFromLiteral(
                             $tlvDeDict->lookup('0C'),
                             new StringLiteral("bar")
+                        ),
+                        ConstructedTlvDeInstance::newFromChildren(
+                            $tlvDeDict->lookup('3F31'),
+                            []
                         )
                     ],
                     64
                 )
             ]
         ];
+    }
+
+    public function testException(): void
+    {
+        $tlvDedumper = new TlvDedumper();
+
+        $istream = new StringInputStream('01 x');
+
+        $this->expectException(SyntaxError::class);
+
+        $this->expectExceptionMessage(
+            'Syntax error, expected one of "<" in "01 x" at offset 3 ("x") '
+                . "in tag '01'"
+        );
+
+        $tlvDedumper->dedumpTlvDeInstance($istream);
     }
 }

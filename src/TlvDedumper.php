@@ -5,6 +5,7 @@ namespace alcamo\x690;
 use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\exception\{ExceptionInterface, SyntaxError};
 use alcamo\input_stream\StringInputStream;
+use alcamo\x690\exception\MessageFactory;
 
 /**
  * @brief Dedumper for TLV data element instances
@@ -88,7 +89,20 @@ class TlvDedumper
                     $children
                 );
             } else {
-                if ($istream->peek() == "'") {
+                if ($istream->peek() == ">") {
+                    $result = PrimitiveTlvDeInstance::newFromRawContent(
+                        $tlvDataElement,
+                        new ImmutableBinaryString('')
+                    );
+
+                    if (isset($length) && $length) {
+                        $result = PrimitiveTlvDeInstance::newFromLiteral(
+                            $tlvDataElement,
+                            $result->getLiteral(),
+                            $length
+                        );
+                    }
+                } elseif ($istream->peek() == "'") {
                     $istream->extract();
 
                     $rawContent = ImmutableBinaryString::newFromHex(
@@ -129,7 +143,8 @@ class TlvDedumper
         } catch (ExceptionInterface $e) {
             if (!isset($e->getMessageContext()['inTag'])) {
                 $e->addMessageContext(
-                    [ 'inTag' => $tag ]
+                    [ 'inTag' => $tag ],
+                    new MessageFactory()
                 );
             }
 
@@ -144,7 +159,7 @@ class TlvDedumper
     ): array {
         $result = [];
 
-        for ( ; ; ) {
+        while (true) {
             $istream->extractWsAndComments();
 
             if (!$istream->isGood() || $istream->peek() == '>') {
