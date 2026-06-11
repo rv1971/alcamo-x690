@@ -3,6 +3,7 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
+use alcamo\data_element\DeInstanceInterface;
 use alcamo\exception\InvalidType;
 
 /**
@@ -22,12 +23,17 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
 {
     public static function newFromChildren(
         ConstructedTlvDataElement $tlvDataElement,
-        iterable $children
+        iterable $children,
+        ?int $length = null
     ): self {
         return new static(
             $tlvDataElement,
             new ImmutableBinaryString(
-                (new TlvSerializer())->serializeTlvDeInstances($children)
+                str_pad(
+                    (new TlvSerializer())->serializeTlvDeInstances($children),
+                    $length,
+                    "\x00"
+                )
             ),
             $children
         );
@@ -66,27 +72,34 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
         return $this->children_;
     }
 
-    public function equals(AbstractTlvDeInstance $tlvDeInstance): bool
+    /**
+     * @copybrief alcamo::x690::AbstractTlvDeInstance::equals()
+     *
+     * This is the case if both are instances of this class AND belong to the
+     * same TLV data element AND the raw contents are equal AND all children
+     * are considered equal.
+     */
+    public function equals(object $deInstance): bool
     {
-        if (!($tlvDeInstance instanceof self)) {
+        if (!($deInstance instanceof self)) {
             return false;
         }
 
         if (
-            $this->getDataElement() != $tlvDeInstance->getDataElement()
-            || $this->getRawContent() != $tlvDeInstance->getRawContent()
+            $this->getDataElement() != $deInstance->getDataElement()
+            || $this->getRawContent() != $deInstance->getRawContent()
         ) {
             return false;
         }
 
-        reset($tlvDeInstance->children_);
+        reset($deInstance->children_);
 
         foreach ($this->children_ as $child) {
-            if (!$child->equals(current($tlvDeInstance->children_))) {
+            if (!$child->equals(current($deInstance->children_))) {
                 return false;
             }
 
-            next($tlvDeInstance->children_);
+            next($deInstance->children_);
         }
 
         return true;

@@ -59,14 +59,31 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
         return $this->literal_;
     }
 
-    public function equals(AbstractTlvDeInstance $tlvDeInstance): bool
+    /**
+     * @copybrief alcamo::x690::AbstractTlvDeInstance::equals()
+     *
+     * This is the case iff:
+     * - Either both are instances of this class AND belong to the same TLV
+     *   data element AND the raw contents and the contained literals are
+     *   considered equal.
+     * - Or $deInstance is an instance of
+     *   alcamo::data_element::DeInstanceInterface but not of this class, AND
+     *   bith are equal in the sense of
+     *   alcamo::data_element::DeInstanceInterface::equals().
+     */
+    public function equals(object $deInstance): bool
     {
-        if (!($tlvDeInstance instanceof self)) {
-            return false;
-        }
+        switch (true) {
+            case $deInstance instanceof self:
+                return $this->getDataElement() == $deInstance->getDataElement()
+                    && $this->getRawContent() == $deInstance->getRawContent()
+                    && $this->literal_ = $deInstance->literal_;
 
-        return $this->getDataElement() == $tlvDeInstance->getDataElement()
-            && $this->getRawContent() == $tlvDeInstance->getRawContent()
-            && $this->literal_ = $tlvDeInstance->literal_;
+            case $deInstance instanceof DeInstanceInterface:
+                return $deInstance->equals($this);
+
+            default:
+                return false;
+        }
     }
 }
