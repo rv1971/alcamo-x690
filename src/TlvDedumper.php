@@ -19,8 +19,7 @@ class TlvDedumper
 
     public function __construct(?TlvDeDictInterface $tlvDeDict = null)
     {
-        $this->tlvDeDict_ =
-            $tlvDeDict ?? new UniversalClassTlvDataElementDict();
+        $this->tlvDeDict_ = $tlvDeDict ?? new UniversalClassTlvDeDict();
 
         $this->tlvSerializer_ = new TlvSerializer();
     }

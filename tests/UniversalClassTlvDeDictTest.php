@@ -5,7 +5,7 @@ namespace alcamo\x690;
 use PHPUnit\Framework\TestCase;
 use alcamo\rdf_literal\HexBinaryLiteral;
 
-class UniversalClassTlvDataElementDictTest extends TestCase
+class UniversalClassTlvDeDictTest extends TestCase
 {
     public const XSD_NS = AbstractTlvDataElement::XSD_NS;
 
@@ -18,7 +18,7 @@ class UniversalClassTlvDataElementDictTest extends TestCase
     ): void {
         $tag = Tag::newFromHex($hexTag);
 
-        $dict = new UniversalClassTlvDataElementDict();
+        $dict = new UniversalClassTlvDeDict();
 
         $dataElement = $dict->lookup($tag);
 
@@ -66,7 +66,7 @@ class UniversalClassTlvDataElementDictTest extends TestCase
 
     public function testGetEocDeInstance(): void
     {
-        $dict = new UniversalClassTlvDataElementDict();
+        $dict = new UniversalClassTlvDeDict();
 
         $eocDeInstance = $dict->getEocDeInstance();
 

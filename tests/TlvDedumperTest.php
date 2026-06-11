@@ -37,7 +37,7 @@ class TlvDedumperTest extends TestCase
 
     public function dedumpTlvDeInstanceProvider(): array
     {
-        $tlvDeDict = new UniversalClassTlvDataElementDict();
+        $tlvDeDict = new UniversalClassTlvDeDict();
 
         return [
             [

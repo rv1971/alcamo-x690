@@ -19,7 +19,7 @@ use alcamo\rdf_literal\{HexBinaryLiteral, BitStringLiteral};
  *
  * @date Last reviewed 2026-05-29
  */
-class UniversalClassTlvDataElementDict implements TlvDeDictInterface
+class UniversalClassTlvDeDict implements TlvDeDictInterface
 {
     public const DICT = [
         '00' => [

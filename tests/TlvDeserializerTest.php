@@ -17,7 +17,7 @@ use alcamo\rdf_literal\{
 };
 use alcamo\input_stream\StringInputStream;
 
-class MyTlvDataElementDict extends UniversalClassTlvDataElementDict
+class MyTlvDataElementDict extends UniversalClassTlvDeDict
 {
     public function lookup($tag, $parent = null): TlvDataElementInterface
     {

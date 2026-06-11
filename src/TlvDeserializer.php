@@ -17,8 +17,7 @@ class TlvDeserializer
 
     public function __construct(?TlvDeDictInterface $tlvDeDict = null)
     {
-        $this->tlvDeDict_ =
-            $tlvDeDict ?? new UniversalClassTlvDataElementDict();
+        $this->tlvDeDict_ = $tlvDeDict ?? new UniversalClassTlvDeDict();
     }
 
     public function getTlvDeDict(): TlvDeDictInterface
