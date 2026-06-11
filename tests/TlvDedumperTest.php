@@ -3,7 +3,12 @@
 namespace alcamo\x690;
 
 use alcamo\input_stream\StringInputStream;
-use alcamo\rdf_literal\{BooleanLiteral, HexBinaryLiteral, IntegerLiteral};
+use alcamo\rdf_literal\{
+    BooleanLiteral,
+    HexBinaryLiteral,
+    IntegerLiteral,
+    StringLiteral
+};
 use PHPUnit\Framework\TestCase;
 
 class TlvDedumperTest extends TestCase
@@ -20,6 +25,11 @@ class TlvDedumperTest extends TestCase
         $deInstance = $tlvDedumper->dedumpTlvDeInstance(
             new StringInputStream($dumpText)
         );
+
+        if (!$deInstance->equals($expectedDeInstance)) {
+            echo "*** expected {$expectedDeInstance->getRawContent()}\n";
+            echo "*** found {$deInstance->getRawContent()}\n";
+        }
 
         $this->assertTrue($deInstance->equals($expectedDeInstance));
     }
@@ -50,7 +60,7 @@ class TlvDedumperTest extends TestCase
             ],
             [
                 "; blabla\n; blablabla\n"
-                    . "3F30 [18] <\n"
+                    . "3F30 [40] <\n"
                     . "; Lorem ipsum dolor sit amet\n"
                     . "01 < '01' >\n"
                     . "; consetetur sadipscing elitr,\n"
@@ -58,7 +68,9 @@ class TlvDedumperTest extends TestCase
                     . "; ut labore et dolore magna aliquyam erat,\n"
                     . "; sed diam voluptua.\n"
                     . "02 [3] <'11'>\n"
-                    . ">",
+                    . "0C<\"foo\" >\n"
+                    . "0C < '626172' > \n"
+                    . "\t>",
                 ConstructedTlvDeInstance::newFromChildren(
                     $tlvDeDict->lookup('3F30'),
                     [
@@ -70,9 +82,17 @@ class TlvDedumperTest extends TestCase
                             $tlvDeDict->lookup('02'),
                             new IntegerLiteral(17),
                             3
+                        ),
+                        PrimitiveTlvDeInstance::newFromLiteral(
+                            $tlvDeDict->lookup('0C'),
+                            new StringLiteral("foo")
+                        ),
+                        PrimitiveTlvDeInstance::newFromLiteral(
+                            $tlvDeDict->lookup('0C'),
+                            new StringLiteral("bar")
                         )
                     ],
-                    24
+                    64
                 )
             ]
         ];

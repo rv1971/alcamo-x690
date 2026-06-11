@@ -40,9 +40,11 @@ class TlvDedumper
         }
 
         /* This also extracts any whitespace after the tag. */
-        $tag = Tag::newFromHex($istream->extractToken(null, true));
+        $tag = Tag::newFromHex($istream->extractHexDigits());
 
         try {
+            $istream->extractWs();
+
             $tlvDataElement = $this->tlvDeDict_->lookup($tag, $parent);
 
             /* Extract optional length */
@@ -86,12 +88,37 @@ class TlvDedumper
                     $children
                 );
             } else {
-                $result = PrimitiveTlvDeInstance::newFromLiteral(
-                    $tlvDataElement,
-                    $tlvDataElement->getSerializer()
-                        ->dedumpFromStream($istream),
-                    $length
-                );
+                if ($istream->peek() == "'") {
+                    $istream->extract();
+
+                    $rawContent = ImmutableBinaryString::newFromHex(
+                        $istream->extractHexDigits() ?? ''
+                    );
+
+                    $result = PrimitiveTlvDeInstance::newFromRawContent(
+                        $tlvDataElement,
+                        $rawContent
+                    );
+
+                    $istream->extractFixedString("'");
+
+                    $istream->extractWs();
+
+                    if (isset($length) && count($rawContent) < $length) {
+                        $result = PrimitiveTlvDeInstance::newFromLiteral(
+                            $tlvDataElement,
+                            $result->getLiteral(),
+                            $length
+                        );
+                    }
+                } else {
+                    $result = PrimitiveTlvDeInstance::newFromLiteral(
+                        $tlvDataElement,
+                        $tlvDataElement->getSerializer()
+                            ->dedumpFromStream($istream),
+                        $length
+                    );
+                }
             }
 
             $istream->extractFixedString('>', true);
