@@ -13,7 +13,7 @@ class TlvDeWorkbench extends DeWorkbench
     {
         return self::$mainInstance_ ?? (
             self::$mainInstance_
-                = static::newFromSchemaFactory(new SchemaFactory())
+                = static::newFromSchema((new SchemaFactory())->getMainSchema())
         );
     }
 
