@@ -4,18 +4,18 @@ namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\{
-    AbstractSerializer,
-    DataElement,
-    DateTimeSerializer,
-    IntegerSerializer
-};
+use alcamo\data_element\DataElement;
 use alcamo\dom\schema\SchemaFactory;
 use alcamo\exception\InvalidType;
 use alcamo\rdf_literal\{
     BooleanLiteral,
     DateLiteral,
     IntegerLiteral
+};
+use alcamo\rdf_literal_serializer\{
+    AbstractSerializer,
+    DateTimeSerializer,
+    IntegerSerializer
 };
 
 class ConstructedTlvDeInstanceTest extends TestCase

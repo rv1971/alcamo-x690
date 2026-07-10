@@ -4,19 +4,19 @@ namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\{
-    AbstractSerializer,
-    BinarySerializer,
-    DataElement,
-    IntegerSerializer,
-    NonNegativeIntegerSerializer,
-    StringSerializer
-};
+use alcamo\data_element\DataElement;
 use alcamo\dom\schema\SchemaFactory;
 use alcamo\rdf_literal\{
     HexBinaryLiteral,
     NonNegativeIntegerLiteral,
     StringLiteral
+};
+use alcamo\rdf_literal_serializer\{
+    AbstractSerializer,
+    BinarySerializer,
+    IntegerSerializer,
+    NonNegativeIntegerSerializer,
+    StringSerializer
 };
 
 class PrimitiveTlvDeInstanceTest extends TestCase

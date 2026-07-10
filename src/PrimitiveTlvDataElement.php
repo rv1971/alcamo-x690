@@ -2,7 +2,8 @@
 
 namespace alcamo\x690;
 
-use alcamo\data_element\{DataElementInterface, SerializerInterface};
+use alcamo\data_element\DataElementInterface;
+use alcamo\rdf_literal_serializer\SerializerInterface;
 use alcamo\exception\DataValidationFailed;
 
 /**

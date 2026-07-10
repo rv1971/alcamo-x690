@@ -3,14 +3,14 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\data_element\{
+use alcamo\data_element\DataElement;
+use alcamo\dom\schema\SchemaFactory;
+use alcamo\rdf_literal\{NonNegativeIntegerLiteral, StringLiteral};
+use alcamo\rdf_literal_serializer\{
     AbstractSerializer,
-    DataElement,
     NonNegativeIntegerSerializer,
     StringSerializer
 };
-use alcamo\dom\schema\SchemaFactory;
-use alcamo\rdf_literal\{NonNegativeIntegerLiteral, StringLiteral};
 
 class TlvSerializerTest extends TestCase
 {

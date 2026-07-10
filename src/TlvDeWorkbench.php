@@ -2,14 +2,16 @@
 
 namespace alcamo\x690;
 
-use alcamo\data_element\{AbstractSerializer, DeWorkbench};
+use alcamo\data_element\DeWorkbench;
+use alcamo\rdf_literal_workbench\LiteralWorkbench;
+use alcamo\rdf_literal_serializer\AbstractSerializer;
 use alcamo\dom\schema\SchemaFactory;
 
 class TlvDeWorkbench extends DeWorkbench
 {
     private static $mainInstance_; ///< self
 
-    public static function getMainInstance(): DeWorkbench
+    public static function getMainInstance(): LiteralWorkbench
     {
         return self::$mainInstance_ ?? (
             self::$mainInstance_

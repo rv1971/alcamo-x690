@@ -3,19 +3,16 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\data_element\{
-    AbstractSerializer,
-    DataElement,
-    IntegerSerializer
-};
+use alcamo\data_element\DataElement;
 use alcamo\exception\Eof;
+use alcamo\input_stream\StringInputStream;
 use alcamo\rdf_literal\{
     BooleanLiteral,
     HexBinaryLiteral,
     IntegerLiteral,
     StringLiteral
 };
-use alcamo\input_stream\StringInputStream;
+use alcamo\rdf_literal_serializer\{AbstractSerializer, IntegerSerializer};
 
 class MyTlvDataElementDict extends UniversalClassTlvDeDict
 {
