@@ -3,8 +3,7 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\DataElement;
-use alcamo\rdf_literal\{HexBinaryLiteral, BitStringLiteral};
+use alcamo\rdf_literal\BitStringLiteral;
 use alcamo\rdf_literal_serializer\{
     BinarySerializer,
     BitStringSerializer,

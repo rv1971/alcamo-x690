@@ -143,21 +143,21 @@ class TlvDeserializer
             if ($length >= 0) {
                 $rawContent = $istream->extract($length);
 
-                $content = $this->deserializeTlvDeInstances(
+                $children = $this->deserializeTlvDeInstances(
                     new StringInputStream($rawContent),
                     $tag
                 );
             } else {
                 $rawContent = '';
 
-                $content = $this
+                $children = $this
                     ->deserializeDeInstances($istream, $tag, true, $rawContent);
             }
 
             return new ConstructedTlvDeInstance(
                 $tlvDataElement,
                 new ImmutableBinaryString($rawContent),
-                $content
+                $children
             );
         } else {
             OutOfRange::throwIfNegative($length);
@@ -179,14 +179,12 @@ class TlvDeserializer
     ): array {
         $result = [];
 
-        if ($stopAtEoc) {
-            $eocDeInstance = $this->tlvDeDict_->getEocDeInstance();
-        }
-
         while ($istream->isGood()) {
             $deInstance = $this->deserializeTlvDeInstance($istream, $parent);
 
-            if ($stopAtEoc && $deInstance === $eocDeInstance) {
+            if (
+                $stopAtEoc && $deInstance->getDataElement()->getTag()->isEoc()
+            ) {
                 break;
             }
 

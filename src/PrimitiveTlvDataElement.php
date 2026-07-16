@@ -28,7 +28,7 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
 
         if ($this->tag_->isConstructed()) {
             /** @throw alcamo::exception::DataValidationFailed if tag in
-             *  $tlvDataElement is not constructed. */
+             *  $tlvDataElement is constructed. */
             throw (new DataValidationFailed())->setMessageContext(
                 [ 'extraMessage' => "tag '{$this->tag_}' is constructed" ]
             );

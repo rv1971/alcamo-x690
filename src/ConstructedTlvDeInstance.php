@@ -9,11 +9,11 @@ use alcamo\exception\InvalidType;
 /**
  * @brief Instance of a constructed TLV data element
  *
- * @note Since the TLV data element contains raw *content* but not the raw
- * *length*, serializing a TLV data element always uses the definite form of
- * length encoding, even if the data element was deserialized from data with
- * the indefinite form. In this case the result of deserializing and
- * subsequent serializing does not exactly reproduce the original data.
+ * @note Since this class contains raw *content* but not the raw *length*,
+ * serializing a TLV data element always uses the definite form of length
+ * encoding, even if the data element was deserialized from data with the
+ * indefinite form. In this case the result of deserializing and subsequent
+ * serializing does not exactly reproduce the original data.
  *
  * @invariant Immutable class.
  *

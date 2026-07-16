@@ -74,7 +74,7 @@ class TlvDumper
         $result = '';
 
         if ($this->flags_ & self::DUMP_COMMENTS) {
-            $result .= $this->dumpComments($deInstance, $indent) . "\n";
+            $result .= $this->dumpComments($deInstance, $indent) . PHP_EOL;
         }
 
         $result .= $indent . $this->dumpTag($deInstance);
@@ -96,7 +96,7 @@ class TlvDumper
                     . $this->dumpTlvDeInstance($deInstance->getChildren()[0])
                     . ' ';
             } else {
-                $result .= "\n"
+                $result .= PHP_EOL
                     . $this->dumpTlvDeInstances(
                         $deInstance->getChildren(),
                         static::INDENT_STRING . $indent
@@ -117,7 +117,7 @@ class TlvDumper
         $result = '';
 
         foreach ($deInstances as $deInstance) {
-            $result .= $this->dumpTlvDeInstance($deInstance, $indent) . "\n";
+            $result .= $this->dumpTlvDeInstance($deInstance, $indent) . PHP_EOL;
         }
 
         return $result;

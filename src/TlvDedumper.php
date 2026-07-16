@@ -39,7 +39,6 @@ class TlvDedumper
             return null;
         }
 
-        /* This also extracts any whitespace after the tag. */
         $tag = Tag::newFromHex($istream->extractHexDigits());
 
         try {

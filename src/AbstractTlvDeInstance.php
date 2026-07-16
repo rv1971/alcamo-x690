@@ -3,7 +3,7 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\{DataElementInterface, DeInstanceInterface};
+use alcamo\data_element\DataElementInterface;
 
 /**
  * @brief Instance of a TLV data element

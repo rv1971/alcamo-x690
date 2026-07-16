@@ -9,6 +9,10 @@ use alcamo\rdf_literal\LiteralInterface;
 /**
  * @brief Instance of a primitive TLV data element
  *
+ * The factory methods and the constructor neither validate the literal nor
+ * check that the literal data type is compatible with the data element
+ * datatype.
+ *
  * @invariant Immutable class.
  *
  * @date Last reviewed 2026-05-05
@@ -19,12 +23,13 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
     public static function newFromLiteral(
         PrimitiveTlvDataElement $tlvDataElement,
         LiteralInterface $literal,
-        ?int $length = null
+        ?int $serializedLength = null
     ): self {
         return new static(
             $tlvDataElement,
             new ImmutableBinaryString(
-                $tlvDataElement->getSerializer()->serialize($literal, $length)
+                $tlvDataElement->getSerializer()
+                    ->serialize($literal, $serializedLength)
             ),
             $literal
         );
@@ -68,7 +73,7 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
      *   considered equal.
      * - Or $deInstance is an instance of
      *   alcamo::data_element::DeInstanceInterface but not of this class, AND
-     *   bith are equal in the sense of
+     *   both are equal in the sense of
      *   alcamo::data_element::DeInstanceInterface::equals().
      */
     public function equals(object $deInstance): bool

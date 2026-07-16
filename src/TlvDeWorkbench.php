@@ -29,8 +29,6 @@ class TlvDeWorkbench extends DeWorkbench
 
         $props = (object)$props;
 
-        $props->tlvDeWorkbench = $this;
-
         $dataElement = $this->createDataElementFromXName(
             $props->datatypeXName,
             $props->rdfaData ?? null

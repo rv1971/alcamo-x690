@@ -50,8 +50,8 @@ class HtmlTlvDumper extends TlvDumper
     public function dumpTag(AbstractTlvDeInstance $deInstance): string
     {
         return $this->createElement(
-            parent::dumpTag($deInstance),
             'tag',
+            parent::dumpTag($deInstance),
             $this->flags_ & self::DUMP_COMMENTS
                 ? null
                 : $this->explainer_
@@ -65,16 +65,16 @@ class HtmlTlvDumper extends TlvDumper
         ?string $indent = null
     ): string {
         return $this->createElement(
-            parent::dumpComments($deInstance, $indent),
-            'comment'
+            'comment',
+            parent::dumpComments($deInstance, $indent)
         );
     }
 
     public function dumpLength(AbstractTlvDeInstance $deInstance): string
     {
         return $this->createElement(
-            parent::dumpLength($deInstance),
             'length',
+            parent::dumpLength($deInstance),
             "decimal {$deInstance->getLength()}"
         );
     }
@@ -82,12 +82,12 @@ class HtmlTlvDumper extends TlvDumper
     public function dumpLiteral(AbstractTlvDeInstance $deInstance): string
     {
         return
-            $this->createElement(parent::dumpLiteral($deInstance), 'literal');
+            $this->createElement('literal', parent::dumpLiteral($deInstance));
     }
 
     protected function createElement(
-        string $content,
         string $paramPrefix,
+        string $content,
         ?string $title = null,
         ?string $hrefItem = null
     ): string {
