@@ -34,24 +34,9 @@ class PrimitiveTlvDataElement extends AbstractTlvDataElement
             );
         }
 
-        if (
-            !$this->dataElement_->getDatatype()->isEqualToOrDerivedFrom(
-                $serializer->getDatatype()->getXName()
-            )
-        ) {
-            /** @throw alcamo::exception::DataValidationFailed if the
-             *  data element datatype it not equal to or derived from the
-             *  serializer datatype. */
-            throw (new DataValidationFailed())->setMessageContext(
-                [
-                    'extraMessage' => 'the data element datatype '
-                        . $this->dataElement_->getDatatype()->getXName()
-                        . ' is not equal to or derived from '
-                        . 'the serializer datatype '
-                        . $serializer->getDatatype()->getXName()
-                ]
-            );
-        }
+        $this->dataElement_->getDatatype()->throwUnlessEqualToOrDerivedFrom(
+            $serializer->getDatatype()->getXName()
+        );
 
         $this->serializer_ = $serializer;
 

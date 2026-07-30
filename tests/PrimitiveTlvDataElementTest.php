@@ -5,7 +5,7 @@ namespace alcamo\x690;
 use PHPUnit\Framework\TestCase;
 use alcamo\data_element\DataElement;
 use alcamo\dom\schema\SchemaFactory;
-use alcamo\exception\DataValidationFailed;
+use alcamo\exception\{DataValidationFailed, InvalidType};
 use alcamo\rdf_literal\DigitStringLiteral;
 use alcamo\rdf_literal_serializer\{
     AbstractSerializer,
@@ -158,13 +158,11 @@ class PrimitiveTlvDataElementTest extends TestCase
 
         $serializer = new StringSerializer();
 
-        $this->expectException(DataValidationFailed::class);
+        $this->expectException(InvalidType::class);
 
         $this->expectExceptionMessage(
-            'Validation failed; the data element datatype '
-                . 'http://www.w3.org/2001/XMLSchema hexBinary is not equal to '
-                . 'or derived from the serializer datatype '
-                . 'http://www.w3.org/2001/XMLSchema string'
+            'Invalid type "http://www.w3.org/2001/XMLSchema hexB...", '
+                . 'expected one of "derived from http://www.w3.org/2001/X..."'
         );
 
         new PrimitiveTlvDataElement($tag, $dataElement, $serializer);
