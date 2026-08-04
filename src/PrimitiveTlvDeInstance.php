@@ -4,6 +4,7 @@ namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\data_element\DeInstanceInterface;
+use alcamo\exception\ExceptionInterface;
 use alcamo\rdf_literal\LiteralInterface;
 
 /**
@@ -39,12 +40,22 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
         PrimitiveTlvDataElement $tlvDataElement,
         ImmutableBinaryString $rawContent
     ): self {
-        return new static(
-            $tlvDataElement,
-            $rawContent,
-            $tlvDataElement->getSerializer()
-                ->deserialize($rawContent->getData())
-        );
+        try {
+            return new static(
+                $tlvDataElement,
+                $rawContent,
+                $tlvDataElement->getSerializer()
+                    ->deserialize($rawContent->getData())
+            );
+        } catch (ExceptionInterface $e) {
+            $e->addMessageContext(
+                [
+                    'tag' => (string)$tlvDataElement->getTag()
+                ]
+            );
+
+            throw $e;
+        }
     }
 
     private $literal_; ///< LiteralInterface
