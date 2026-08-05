@@ -49,7 +49,7 @@ class TlvDumper
         AbstractTlvDeInstance $deInstance,
         ?string $indent = null
     ): string {
-        return $deInstance instanceof DeInstanceInterface
+        return $deInstance instanceof PrimitiveTlvDeInstance
             ? ($this->explainer_
                ->explainAsMarkdownText($deInstance->getDeInstance())
                ->indent($indent . static::START_COMMENT_STRING))
