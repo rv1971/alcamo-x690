@@ -50,7 +50,8 @@ class TlvDumper
         ?string $indent = null
     ): string {
         return $deInstance instanceof DeInstanceInterface
-            ? ($this->explainer_->explainAsMarkdownText($deInstance)
+            ? ($this->explainer_
+               ->explainAsMarkdownText($deInstance->getDeInstance())
                ->indent($indent . static::START_COMMENT_STRING))
             : ($indent . static::START_COMMENT_STRING . $this->explainer_
                ->getDataElementLabel($deInstance->getDataElement()));

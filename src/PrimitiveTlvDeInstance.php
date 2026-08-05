@@ -3,9 +3,9 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\DeInstanceInterface;
+use alcamo\data_element\{ConstructedDeInstance, DeInstance, DeInstanceInterface};
 use alcamo\exception\ExceptionInterface;
-use alcamo\rdf_literal\LiteralInterface;
+use alcamo\rdf_literal\{AbstractConstructedLiteral, LiteralInterface};
 
 /**
  * @brief Instance of a primitive TLV data element
@@ -18,8 +18,7 @@ use alcamo\rdf_literal\LiteralInterface;
  *
  * @date Last reviewed 2026-05-05
  */
-class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
-    DeInstanceInterface
+class PrimitiveTlvDeInstance extends AbstractTlvDeInstance
 {
     public static function newFromLiteral(
         PrimitiveTlvDataElement $tlvDataElement,
@@ -58,7 +57,8 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
         }
     }
 
-    private $literal_; ///< LiteralInterface
+    private $literal_;    ///< LiteralInterface
+    private $deInstance_; ///< DeInstanceInterface
 
     protected function __construct(
         PrimitiveTlvDataElement $tlvDataElement,
@@ -68,11 +68,26 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
         parent::__construct($tlvDataElement, $rawContent);
 
         $this->literal_ = $literal;
+
+        $this->deInstance_ = $literal instanceof AbstractConstructedLiteral
+            ? new ConstructedDeInstance(
+                $tlvDataElement->getDataElement(),
+                $literal
+            )
+            : new DeInstance(
+                $tlvDataElement->getDataElement(),
+                $literal
+            );
     }
 
     public function getLiteral(): LiteralInterface
     {
         return $this->literal_;
+    }
+
+    public function getDeInstance(): DeInstanceInterface
+    {
+        return $this->deInstance_;
     }
 
     /**
