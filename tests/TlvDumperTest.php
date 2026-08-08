@@ -41,8 +41,11 @@ class MyTlvDeDict extends UniversalClassTlvDeDict
                 null,
                 [ [ 'rdfs:label', 'Foo/Bar' ] ]
             ),
-            new ConstructedSerializer(
-                [ $serializer, $serializer ]
+            ConstructedSerializer::newFromProps(
+                [
+                    'serializers' => [ $serializer, $serializer ],
+                    'lengthRange' => [ 2, 2 ]
+                ]
             )
         );
     }
@@ -137,7 +140,7 @@ class TlvDumperTest extends TestCase
             [
                 TlvDumper::DUMP_COMMENTS,
                 'C0023A3B',
-                "; Foo/Bar (b)\n"
+                "; Foo/Bar (b 2)\n"
                 . ";  1. Foo\n"
                 . ";  2. Bar\n"
                 . "C0 < [ '3A' '3B' ] >"
