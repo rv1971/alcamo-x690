@@ -51,7 +51,7 @@ class TlvDumper
     ): string {
         return $deInstance instanceof PrimitiveTlvDeInstance
             ? ($this->explainer_
-               ->explainAsMarkdownText($deInstance->getDeInstance())
+               ->explainAsMarkdownText($deInstance)
                ->indent($indent . static::START_COMMENT_STRING))
             : ($indent . static::START_COMMENT_STRING . $this->explainer_
                ->getDataElementLabel($deInstance->getDataElement()));

@@ -2,8 +2,60 @@
 
 namespace alcamo\x690;
 
+use alcamo\data_element\{ConstructedDataElement, DataElement};
 use alcamo\input_stream\StringInputStream;
+use alcamo\rdf_literal_serializer\{ConstructedSerializer, IntegerSerializer};
 use PHPUnit\Framework\TestCase;
+
+class MyTlvDeDict extends UniversalClassTlvDeDict
+{
+    private $tlvDataElement_;
+
+    public function __construct(?TlvDeWorkbench $tlvDeWorkbench = null)
+    {
+        parent::__construct($tlvDeWorkbench);
+
+        $integerType = $this->tlvDeWorkbench_->getSchema()
+            ->getGlobalType(UniversalClassTlvDeDict::XSD_NS . ' integer');
+
+        $dataElement1 = new DataElement(
+            $integerType,
+            [ [ 'rdfs:label', 'Foo' ] ]
+        );
+
+        $dataElement2 = new DataElement(
+            $integerType,
+            [ [ 'rdfs:label', 'Bar' ] ]
+        );
+
+        $serializer = new IntegerSerializer(
+            $integerType->getXName(),
+            'BIG-ENDIAN',
+            [ 1, 1 ]
+        );
+
+        $this->tlvDataElement_ = new PrimitiveTlvDataElement(
+            Tag::newFromHex('C0'),
+            new ConstructedDataElement(
+                [ $dataElement1, $dataElement2 ],
+                null,
+                [ [ 'rdfs:label', 'Foo/Bar' ] ]
+            ),
+            new ConstructedSerializer(
+                [ $serializer, $serializer ]
+            )
+        );
+    }
+
+    public function lookup($tag, $parent = null): TlvDataElementInterface
+    {
+        if ($tag == 'C0') {
+            return $this->tlvDataElement_;
+        }
+
+        return parent::lookup($tag, $parent);
+    }
+}
 
 class TlvDumperTest extends TestCase
 {
@@ -17,7 +69,7 @@ class TlvDumperTest extends TestCase
     ): void {
         $tlvDumper = new TlvDumper(null, $flags);
 
-        $tlvDeserializer = new TlvDeserializer();
+        $tlvDeserializer = new TlvDeserializer(new MyTlvDeDict());
 
         $deInstance = $tlvDeserializer->deserializeTlvDeInstance(
             new StringInputStream(hex2bin($hexData))
@@ -81,7 +133,16 @@ class TlvDumperTest extends TestCase
                 . "  ; GeneralString (ans)\n"
                 . "  1B < \"\" >\n"
                 . ">"
-            ]
+            ],
+            [
+                TlvDumper::DUMP_COMMENTS,
+                'C0023A3B',
+                "; Foo/Bar (b)\n"
+                . ";  1. Foo\n"
+                . ";  2. Bar\n"
+                . "C0 < [ '3A' '3B' ] >"
+            ],
+
         ];
     }
 }
