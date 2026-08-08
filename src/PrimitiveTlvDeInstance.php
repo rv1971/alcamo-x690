@@ -3,7 +3,12 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\data_element\{ConstructedDeInstance, DeInstance, DeInstanceInterface};
+use alcamo\collection\CollectionInterface;
+use alcamo\data_element\{
+    ConstructedDataElement,
+    DeInstance,
+    DeInstanceInterface
+};
 use alcamo\exception\ExceptionInterface;
 use alcamo\rdf_literal\{AbstractConstructedLiteral, LiteralInterface};
 
@@ -18,7 +23,8 @@ use alcamo\rdf_literal\{AbstractConstructedLiteral, LiteralInterface};
  *
  * @date Last reviewed 2026-05-05
  */
-class PrimitiveTlvDeInstance extends AbstractTlvDeInstance
+class PrimitiveTlvDeInstance extends AbstractTlvDeInstance implements
+    DeInstanceInterface
 {
     public static function newFromLiteral(
         PrimitiveTlvDataElement $tlvDataElement,
@@ -57,8 +63,9 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance
         }
     }
 
-    private $literal_;    ///< LiteralInterface
-    private $deInstance_; ///< DeInstanceInterface
+    private $literal_;          ///< LiteralInterface
+    private $deInstance_;       ///< DeInstanceInterface
+    private $children_ = false; ///< ?CollectionInterface
 
     protected function __construct(
         PrimitiveTlvDataElement $tlvDataElement,
@@ -68,16 +75,6 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance
         parent::__construct($tlvDataElement, $rawContent);
 
         $this->literal_ = $literal;
-
-        $this->deInstance_ = $literal instanceof AbstractConstructedLiteral
-            ? new ConstructedDeInstance(
-                $tlvDataElement->getDataElement(),
-                $literal
-            )
-            : new DeInstance(
-                $tlvDataElement->getDataElement(),
-                $literal
-            );
     }
 
     public function getLiteral(): LiteralInterface
@@ -85,9 +82,25 @@ class PrimitiveTlvDeInstance extends AbstractTlvDeInstance
         return $this->literal_;
     }
 
-    public function getDeInstance(): DeInstanceInterface
+    public function hasChildren(): bool
     {
-        return $this->deInstance_;
+        return $this->getDataElement()
+            ->getDataElement() instanceof ConstructedDataElement
+            && $this->literal_ instanceof AbstractConstructedLiteral;
+    }
+
+    public function getChildren(): ?CollectionInterface
+    {
+        if ($this->children_ === false) {
+            return $this->children_ = $this->hasChildren()
+                ? static::createChildren(
+                    $this->getDataElement()->getDataElement(),
+                    $this->literal_
+                )
+                : null;
+        }
+
+        return $this->children_;
     }
 
     /**

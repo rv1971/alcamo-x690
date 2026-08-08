@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": "7.3 - 8.0",
-        "alcamo/data-element": "^0.1",
+        "alcamo/data-element": "^0.2",
 	"alcamo/html-creation": "^0.12",
         "alcamo/rdf-literal-serializer": "^0.1"
     },
