@@ -3,9 +3,10 @@
 namespace alcamo\x690;
 
 use alcamo\data_element\DeWorkbench;
-use alcamo\rdf_literal_workbench\LiteralWorkbench;
+use alcamo\dom\schema\Schema;
+use alcamo\rdf_literal\LiteralFactory as RdfLiteralFactory;
 use alcamo\rdf_literal_serializer\AbstractSerializer;
-use alcamo\dom\schema\SchemaFactory;
+use alcamo\rdf_literal_workbench\LiteralWorkbench;
 
 class TlvDeWorkbench extends DeWorkbench
 {
@@ -13,9 +14,14 @@ class TlvDeWorkbench extends DeWorkbench
     {
         static $instance;
 
-        return $instance ??
-            ($instance =
-             self::newFromSchema((new SchemaFactory())->getMainSchema()));
+        return $instance ?? ($instance = new self());
+    }
+
+    public function __construct(
+        ?Schema $schema = null,
+        ?RdfLiteralFactory $rdfLiteralFactory = null
+    ) {
+        parent::__construct($schema, $rdfLiteralFactory);
     }
 
     public function createTlvDataElementFromTagAndProps(
