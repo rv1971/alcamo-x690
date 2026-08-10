@@ -272,6 +272,11 @@ class UniversalClassTlvDeDict implements TlvDeDictInterface
             $tlvDeWorkbench ?? TlvDeWorkbench::getMainInstance();
     }
 
+    public function getTlvDeWorkbench(): TlvDeWorkbench
+    {
+        return $this->tlvDeWorkbench_;
+    }
+
     public function lookup($tag, $parent = null): TlvDataElementInterface
     {
         $tagString = (string)$tag;
