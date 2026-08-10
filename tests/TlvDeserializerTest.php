@@ -4,7 +4,7 @@ namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\data_element\DataElement;
-use alcamo\exception\Eof;
+use alcamo\exception\{Eof, LengthOutOfRange};
 use alcamo\input_stream\StringInputStream;
 use alcamo\rdf_literal\{
     BooleanLiteral,
@@ -257,5 +257,42 @@ class TlvDeserializerTest extends TestCase
                 )
             ]
         ];
+    }
+
+    public function testDeserializeException(): void
+    {
+        $binData = hex2bin('01020000');
+
+        $tlvDeserializer = new TlvDeserializer(
+            new UniversalClassTlvDeDict(
+                new TlvDeWorkbench(
+                    null,
+                    null,
+                    AbstractSerializer::SKIP_LENGTH_CHECK
+                )
+            )
+        );
+
+        $istream = new StringInputStream($binData);
+
+        $this->assertTrue(
+            (new BooleanLiteral(false))->equals(
+                $tlvDeserializer
+                    ->deserializeTlvDeInstance($istream)
+                    ->getLiteral()
+            )
+        );
+
+        $tlvDeserializer = new TlvDeserializer();
+
+        $istream = new StringInputStream($binData);
+
+        $this->expectException(LengthOutOfRange::class);
+
+        $this->expectExceptionMessage(
+            'Length 2 of "\000\000" out of range [1, 1]'
+        );
+
+        $tlvDeserializer->deserializeTlvDeInstance($istream);
     }
 }

@@ -17,11 +17,21 @@ class TlvDeWorkbench extends DeWorkbench
         return $instance ?? ($instance = new self());
     }
 
+    private $serializerFlags_;
+
     public function __construct(
         ?Schema $schema = null,
-        ?RdfLiteralFactory $rdfLiteralFactory = null
+        ?RdfLiteralFactory $rdfLiteralFactory = null,
+        ?int $serializerFlags = null
     ) {
         parent::__construct($schema, $rdfLiteralFactory);
+
+        $this->serializerFlags_ = (int)$serializerFlags;
+    }
+
+    public function getSerializerFlags(): int
+    {
+        return $this->serializerFlags_;
     }
 
     public function createTlvDataElementFromTagAndProps(
@@ -43,6 +53,12 @@ class TlvDeWorkbench extends DeWorkbench
             return new ConstructedTlvDataElement($tag, $dataElement);
         } else {
             $props->serializer['datatypeXName'] = $props->datatypeXName;
+
+            if (isset($props->serializer['flags'])) {
+                $props->serializer['flags'] |= $this->serializerFlags_;
+            } else {
+                $props->serializer['flags'] = $this->serializerFlags_;
+            }
 
             return new PrimitiveTlvDataElement(
                 $tag,
