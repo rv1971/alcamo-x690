@@ -148,4 +148,31 @@ class TlvDumperTest extends TestCase
 
         ];
     }
+
+    public function testTlvDumpErrors(): void
+    {
+        $tlvDumper = new TlvDumper(null);
+
+        $tlvDeserializer = new TlvDeserializer(
+            new UniversalClassTlvDeDict(
+                new TlvDeWorkbench(
+                    null,
+                    null,
+                    IntegerSerializer::SKIP_LENGTH_CHECK
+                )
+            )
+        );
+
+        $deInstance = $tlvDeserializer->deserializeTlvDeInstance(
+            new StringInputStream("\x01\x02\x0001")
+        );
+
+        $dump = $tlvDumper->dumpTlvDeInstance($deInstance);
+
+        $this->assertSame(
+            '; ERROR: Length 2 of "\0000" out of range [1, 1]' . PHP_EOL
+                . "01 < '01' >",
+            $dump
+        );
+    }
 }

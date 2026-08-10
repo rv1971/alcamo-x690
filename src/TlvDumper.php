@@ -3,6 +3,8 @@
 namespace alcamo\x690;
 
 use alcamo\data_element\{DeInstanceInterface, Explainer, ExplainerInterface};
+use alcamo\exception\LengthOutOfRange;
+use alcamo\rdf_literal_serializer\SerializerInterface;
 
 /**
  * @brief Dumper for TLV data element instances
@@ -57,6 +59,33 @@ class TlvDumper
                ->getDataElementLabel($deInstance->getDataElement()));
     }
 
+    public function dumpErrors(
+        AbstractTlvDeInstance $deInstance,
+        ?string $indent = null
+    ): ?string {
+        if ($deInstance instanceof PrimitiveTlvDeInstance) {
+            $serializer = $deInstance->getDataElement()->getSerializer();
+
+            if (
+                $serializer->getFlags()
+                    & SerializerInterface::SKIP_LENGTH_CHECK
+            ) {
+                try {
+                    $serializer->withFlags(0)
+                        ->deserialize($deInstance->getRawContent()->getData());
+                } catch (LengthOutOfRange $e) {
+                    $error = $e->getMessage();
+                }
+
+                if (isset($error)) {
+                    return "; ERROR: $error";
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function dumpLength(AbstractTlvDeInstance $deInstance): string
     {
         return sprintf('[%X]', $deInstance->getLength());
@@ -76,6 +105,12 @@ class TlvDumper
 
         if ($this->flags_ & self::DUMP_COMMENTS) {
             $result .= $this->dumpComments($deInstance, $indent) . PHP_EOL;
+        }
+
+        $errors = $this->dumpErrors($deInstance, $indent);
+
+        if (isset($errors)) {
+            $result .= $errors . PHP_EOL;
         }
 
         $result .= $indent . $this->dumpTag($deInstance);

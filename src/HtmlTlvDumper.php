@@ -23,6 +23,7 @@ class HtmlTlvDumper extends TlvDumper
      */
     public const DEFAULT_HTML_PARAMS = [
         'commentClass'  => null,
+        'errorClass'  => null,
         'lengthClass'   => null,
         'literalClass'  => null,
         'tagClass'      => null,
@@ -68,6 +69,15 @@ class HtmlTlvDumper extends TlvDumper
             'comment',
             parent::dumpComments($deInstance, $indent)
         );
+    }
+
+    public function dumpErrors(
+        AbstractTlvDeInstance $deInstance,
+        ?string $indent = null
+    ): ?string {
+        $errors = parent::dumpErrors($deInstance, $indent);
+
+        return isset($errors) ? $this->createElement('error', $errors) : null;
     }
 
     public function dumpLength(AbstractTlvDeInstance $deInstance): string
