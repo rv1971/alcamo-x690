@@ -26,4 +26,10 @@ interface TlvDeDictInterface extends NamespaceConstantsInterface
 
     /// Get the End-of-content data element instance
     public function getEocDeInstance(): PrimitiveTlvDeInstance;
+
+    public function createPrimitiveTlvDeInstance(
+        $value,
+        $tag,
+        $parent = null
+    ): PrimitiveTlvDeInstance;
 }

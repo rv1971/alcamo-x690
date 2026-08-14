@@ -313,4 +313,18 @@ class UniversalClassTlvDeDict implements TlvDeDictInterface
 
         return $this->eocDeInstance_;
     }
+
+    public function createPrimitiveTlvDeInstance(
+        $value,
+        $tag,
+        $parent = null
+    ): PrimitiveTlvDeInstance {
+        $tlvDataElement = $this->lookup($tag, $parent);
+
+        return PrimitiveTlvDeInstance::newFromLiteral(
+            $tlvDataElement,
+            $this->tlvDeWorkbench_
+                ->createLiteral($value, $tlvDataElement->getDatatype())
+        );
+    }
 }

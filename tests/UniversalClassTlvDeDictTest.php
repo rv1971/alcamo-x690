@@ -3,7 +3,7 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\rdf_literal\HexBinaryLiteral;
+use alcamo\rdf_literal\{BitStringLiteral, BooleanLiteral, HexBinaryLiteral};
 
 class UniversalClassTlvDeDictTest extends TestCase
 {
@@ -80,5 +80,30 @@ class UniversalClassTlvDeDictTest extends TestCase
         );
 
         $this->assertSame($eocDeInstance, $dict->getEocDeInstance());
+    }
+
+    /**
+     * @dataProvider createPrimitiveTlvDeInstanceProvider
+     */
+    public function testCreatePrimitiveTlvDeInstance(
+        $value,
+        $hexTag,
+        $expectedLiteral
+    ): void {
+        $dict = new UniversalClassTlvDeDict();
+
+        $tlvDeInstance = $dict->createPrimitiveTlvDeInstance($value, $hexTag);
+
+        $this->assertTrue(
+            $expectedLiteral->equals($tlvDeInstance->getLiteral())
+        );
+    }
+
+    public function createPrimitiveTlvDeInstanceProvider(): array
+    {
+        return [
+            [ true, '01', new BooleanLiteral(true) ],
+            [ '1010', '03', new BitStringLiteral('1010') ]
+        ];
     }
 }
