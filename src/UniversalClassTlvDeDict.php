@@ -3,7 +3,8 @@
 namespace alcamo\x690;
 
 use alcamo\binary_data\ImmutableBinaryString;
-use alcamo\rdf_literal\BitStringLiteral;
+use alcamo\data_element\ConstructedDataElement;
+use alcamo\rdf_literal\{BitStringLiteral, ConstructedHexBinaryLiteral};
 use alcamo\rdf_literal_serializer\{
     BinarySerializer,
     BitStringSerializer,
@@ -323,8 +324,10 @@ class UniversalClassTlvDeDict implements TlvDeDictInterface
 
         return PrimitiveTlvDeInstance::newFromLiteral(
             $tlvDataElement,
-            $this->tlvDeWorkbench_
-                ->createLiteral($value, $tlvDataElement->getDatatype())
+            $this->tlvDeWorkbench_->createLiteralForDataElement(
+                $value,
+                $tlvDataElement->getDataElement()
+            )
         );
     }
 }

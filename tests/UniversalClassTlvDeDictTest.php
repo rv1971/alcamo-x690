@@ -3,7 +3,15 @@
 namespace alcamo\x690;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\rdf_literal\{BitStringLiteral, BooleanLiteral, HexBinaryLiteral};
+use alcamo\rdf_literal\{
+    BitStringLiteral,
+    BooleanLiteral,
+    ConstructedHexBinaryLiteral,
+    HexBinaryLiteral,
+    IntegerLiteral
+};
+
+require_once(__DIR__ . DIRECTORY_SEPARATOR . 'MyTlvDeDict.php');
 
 class UniversalClassTlvDeDictTest extends TestCase
 {
@@ -88,22 +96,46 @@ class UniversalClassTlvDeDictTest extends TestCase
     public function testCreatePrimitiveTlvDeInstance(
         $value,
         $hexTag,
-        $expectedLiteral
+        $expectedLiteral,
+        $expectedHexSerialization
     ): void {
-        $dict = new UniversalClassTlvDeDict();
+        $dict = new MyTlvDeDict();
+
+        $serializer = new TlvSerializer();
 
         $tlvDeInstance = $dict->createPrimitiveTlvDeInstance($value, $hexTag);
 
+        $this->assertSame(
+            get_class($expectedLiteral),
+            get_class($tlvDeInstance->getLiteral())
+        );
+
         $this->assertTrue(
             $expectedLiteral->equals($tlvDeInstance->getLiteral())
+        );
+
+        $this->assertSame(
+            $expectedHexSerialization,
+            bin2hex($serializer->serializeTlvDeInstance($tlvDeInstance))
         );
     }
 
     public function createPrimitiveTlvDeInstanceProvider(): array
     {
         return [
-            [ true, '01', new BooleanLiteral(true) ],
-            [ '1010', '03', new BitStringLiteral('1010') ]
+            [ true, '01', new BooleanLiteral(true), '010101' ],
+            [ '1010', '03', new BitStringLiteral('1010'), '030204a0' ],
+            [
+                [ 43, 44 ],
+                'C0',
+                new ConstructedHexBinaryLiteral(
+                    [
+                        new IntegerLiteral(43),
+                        new IntegerLiteral(44)
+                    ]
+                ),
+                'c0022b2c'
+            ]
         ];
     }
 }
