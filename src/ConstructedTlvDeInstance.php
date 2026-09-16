@@ -49,17 +49,14 @@ class ConstructedTlvDeInstance extends AbstractTlvDeInstance
         $this->children_ = [];
 
         foreach ($children as $key => $deInstance) {
-            if (!($deInstance instanceof AbstractTlvDeInstance)) {
-                /** @throw alcamo::exception::InvalidType if an item in
-                 *  $children is not an AbstractTlvDeInstance object. */
-                throw (new InvalidType())->setMessageContext(
-                    [
-                        'value' => $deInstance,
-                        'expectedOneOf' => AbstractTlvDeInstance::class,
-                        'forKey' => $key
-                    ]
-                );
-            }
+            /** @throw alcamo::exception::InvalidType if an item in $children
+             *  is not an AbstractTlvDeInstance object. */
+            InvalidType::throwIfNotInstanceOf(
+                $deInstance,
+                AbstractTlvDeInstance::class,
+                null,
+                [ 'forKey' => $key ]
+            );
 
             $this->children_[$key] = $deInstance;
         }
