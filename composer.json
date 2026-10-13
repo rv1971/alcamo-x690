@@ -4,7 +4,7 @@
     "keywords": [ "data-element", "serialization", "deserialization", "X.690" ],
     "license": "Apache-2.0",
     "require": {
-        "php": "7.3 - 8.0",
+        "php": "7.3 - 8.5",
         "alcamo/data-element": "^0.3",
 	"alcamo/html-creation": "^0.12",
         "alcamo/rdf-literal-serializer": "^0.2"
